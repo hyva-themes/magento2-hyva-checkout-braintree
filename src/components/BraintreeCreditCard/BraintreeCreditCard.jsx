@@ -1,54 +1,90 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { func, shape } from 'prop-types';
 
 import CCForm from './CCForm';
-import CCIframe from './CCIframe';
-import SavedCards from './SavedCards';
 import Card from '../../../../../components/common/Card';
 import RadioInput from '../../../../../components/common/Form/RadioInput';
-import usePayOneCC from './hooks/usePayOneCC';
-import creditCardConfig from './creditCardConfig';
 import { paymentMethodShape } from '../../utility';
-import useCardTypeDetection from './hooks/useCardTypeDetection';
-import usePayOneCCFormInitialize from './hooks/usePayOneCCFomInitialize';
-import usePayOneCheckoutFormContext from '../../hooks/usePayOneCheckoutFormContext';
-
+import getBraintreeBaseConfig, { getBillingAddress, iFrameStyling, headerStyle } from '../../utility/braintreeConfig';
+import BraintreeClient from 'braintree-web/client';
+import HostedFields from 'braintree-web/hosted-fields';
+import useCardFormValid from './hooks/useCardFormValid';
 function BraintreeCreditCard({ method, selected, actions }) {
-  const savedData = creditCardConfig.useSavedData();
-  const { cardTypeDetected } = useCardTypeDetection();
-  const { registerPaymentAction } = usePayOneCheckoutFormContext();
-  const { handleCreditCardCheckThenPlaceOrder } = usePayOneCC(method.code);
-  const { isFormInitialized, setSelectedCard } = usePayOneCCFormInitialize();
+  const { clientToken } = getBraintreeBaseConfig();
+  const { cardFormValid, setCardFormValid } = useCardFormValid();
+  const [braintreeClient, setBraintreeClient] = useState(null);
+  const [braintreeHostedFields, setBraintreeHostedFields] = useState(null);
+  const [cardType, setCardType] = useState(null);
+  const [useHeaderStyle, setUseHeaderStyle] = useState('');
+
   const isSelected = method.code === selected.code;
 
-  /**
-   * This will be fired when user placing the order and this payment method
-   * is selected by the user.
-   */
-  const paymentSubmitHandler = useCallback(
-    async values => {
-      await handleCreditCardCheckThenPlaceOrder(values);
-      return false;
-    },
-    [handleCreditCardCheckThenPlaceOrder]
-  );
-
-  // registering this payment method so that it will be using the paymentSubmitHandler
-  // to do the place order action in the case this payment method is selected.
+  // Initialise the iframe using the provided clientToken create a braintreeClient
+  // Showing the card form within the payment method.
   useEffect(() => {
-    registerPaymentAction(method.code, paymentSubmitHandler);
-  }, [method, registerPaymentAction, paymentSubmitHandler]);
-
-  // initializing the iframe and showing the card form within the payment method.
-  useEffect(() => {
-    if (isSelected && isFormInitialized) {
-      window.iframes = new window.Payone.ClientApi.HostedIFrames(
-        creditCardConfig.fieldConfig,
-        creditCardConfig.request
-      );
-      window.iframes.setCardType('V');
+    if ((isSelected) && (clientToken) && (braintreeClient)) {
+      await BraintreeClient.create({ authorization: braintreeClientToken }, (err, clientInstance) => {
+        if (err) {
+          console.log(err);
+        } 
+        else {
+          setBraintreeClient(clientInstance);
+          HostedFields.create({
+              client: clientInstance,
+              styles: {iFrameStyling},
+              fields: {
+                number: { selector: '#card-number', placeholder: '4111 1111 1111 1111' },
+                cvv: {selector: '#cvv', placeholder: '123' },
+                expirationDate: { selector: '#expiration-date', placeholder: '10/2021' }
+              },
+            }, (err, hostedFields) => {
+              if (err) {
+                  console.log(err);
+                  return;
+              }
+              setBraintreeHostedFields(hostedFields);
+              hostedFields.on('validityChange', function (event) {
+                setCardFormValid(Object.keys(event.fields).every(function (key) {
+                  return event.fields[key].isValid;
+                }));   
+              });
+              hostedFields.on('empty', function (event) {
+                if (event.emittedBy === 'number') {
+                  setUseHeaderStyle('');
+                  setCardType('');
+                }
+              });
+              hostedFields.on('cardTypeChange', function (event) {
+                  if (event.cards.length === 1) {
+                      setCardType(event.cards[0].type.replace('-', ''));
+                      setUseHeaderStyle(headerStyle);
+                      // Change the CVV length for AmericanExpress cards
+                      if (event.cards[0].code.size === 4) {
+                        hostedFields.setAttribute({field: 'cvv',attribute: 'placeholder', value: '1234'});
+                      } 
+                  } else {
+                      hostedFields.setAttribute({field: 'cvv',attribute: 'placeholder', value: '123'});
+                  }
+              });
+          });
+        }
+      });
     }
-  }, [isSelected, isFormInitialized]);
+  }, [isSelected, braintreeCLient]);
+
+  useEffect(() => {
+    if ((cardFormValid) && (!paymentNonce)) {
+      const options = getBillingAddress();
+      braintreeHostedFields.tokenize(options, (err, payload) => {
+        if (err) {
+            console.log(err);
+        } else {
+            setPaymentNonce(payload.nonce); 
+            setFieldValue(`${PAYMENT_METHOD_FORM}.paymentNonce`, payload.nonce);
+        }
+      });
+    }
+  });
 
   const radioInputElement = (
     <RadioInput
@@ -64,9 +100,6 @@ function BraintreeCreditCard({ method, selected, actions }) {
     return (
       <>
         {radioInputElement}
-        <div className="hidden">
-          <CCIframe detectedCardType={cardTypeDetected} />
-        </div>
       </>
     );
   }
@@ -76,9 +109,16 @@ function BraintreeCreditCard({ method, selected, actions }) {
       <div>{radioInputElement}</div>
       <div className="mx-4 my-4">
         <Card bg="darker">
-          <div className="container flex flex-col justify-center w-4/5">
-            <CCForm detectedCardType={cardTypeDetected} />
+          <TextInput
+            type="hidden"
+            value={paymentNonce}
+            name="paymentNonce"
+            formikData={formikData}
+          />
+          <div style={useHeaderStyle}>    
+            <h1 className="font-thin text-xl block">Payment Method</h1>
           </div>
+          <CCForm detectedCardType={cardType} />
         </Card>
       </div>
     </>
