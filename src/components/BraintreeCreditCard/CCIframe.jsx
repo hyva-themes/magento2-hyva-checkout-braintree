@@ -1,27 +1,22 @@
 import React from 'react';
 import { string } from 'prop-types';
-import _get from 'lodash.get';
 
 import { __ } from '../../../../../i18n';
-import getBraintreeBaseConfig, { cardImage }  from '../../utility/braintreeConfig';
+import paymentConfig  from './braintreeCreditCardConfig';
 
-function getCardTypeImageUrl(cardId) {
-    const { icons } = getBraintreeBaseConfig();
-    cardURL = icons.find(cardType => cardType === cardId);
-    return cardUrl.url;
+function getCardTypeImageUrl(cardType) {
+    return paymentConfig.icons[cardType].url;
 }
-
 function CCIframe({ detectedCardType }) {
-  const { availableCardTypes } = getBraintreeBaseConfig();
-  let detectedCard, newCardImage;
+  let detectedCard;
+  let availableCardTypes = paymentConfig.availableCardTypes;
 
-  detectedCard = creditCardConfig.availableCardTypes.find(
-    cardType => cardType.id.toUpperCase() === detectedCardType
+  detectedCard = availableCardTypes.find(
+    cardType => paymentConfig.ccTypesMapper[detectedCardType] === cardType
   );
 
   if (detectedCard) {
     availableCardTypes = [detectedCard];
-    newCardImage = Object.assign(cardImage['base'],cardImage[detectedCardType]);
   }
 
   return (
@@ -33,24 +28,23 @@ function CCIframe({ detectedCardType }) {
                 <img
                   key={cardType}
                   alt={cardType}
-                  className="w-auto h-3"
+                  className="w-auto h-8"
                   src={getCardTypeImageUrl(cardType)}
                 />
               ))}
             </div>
             <label className="block text-lg mb-2 uppercase" for="card-number">{__('Credit Card Number')}</label>
             <div className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1" id="card-number"></div>
-            <div id="card-image" style={newCardImage}></div>
         </div>
       </div>
 
       <div className="flex justify-around">
         <div className="mr-1 w-full transition-transform" >
-            <label className="block text-lg mb-2 uppercase" for="expiration-date">{__('Expiration Date')}</label>
+            <label className="block text-lg mb-2 uppercase" for="expiration-date">{__('Expiry')}</label>
             <div className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1' id="expiration-date"></div>
         </div>
         <div className="w-full transition-transform">
-            <label className="block text-lg mb-2 uppercase" for="cvv">{__('Card Verification Number')}</label>
+            <label className="block text-lg mb-2 uppercase" for="cvv">{__('CVV')}</label>
             <div className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1' id="cvv"></div>
         </div>
       </div>  
