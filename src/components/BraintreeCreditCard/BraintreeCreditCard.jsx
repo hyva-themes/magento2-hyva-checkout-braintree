@@ -25,8 +25,6 @@ function BraintreeCreditCard({ method, selected, actions }) {
 
   const isSelected = method.code === selected.code;
 
-  console.log(iFrameValid);
-
   /**
    * This will be fired when user placing the order and this payment method
    * is selected by the user.
@@ -146,7 +144,6 @@ function BraintreeCreditCard({ method, selected, actions }) {
         if (err) {
             console.log(err);
         } else {
-          console.log("setting the nonce again");
           setPaymentMethod(method.code,payload.nonce);
         }
       });
