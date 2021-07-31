@@ -1,3 +1,3 @@
-import BraintreeApplePay from './BraintreeApplePay';
+import ApplePayWrapper from './ApplePayWrapper';
 
-export default BraintreeApplePay;
+export default ApplePayWrapper;

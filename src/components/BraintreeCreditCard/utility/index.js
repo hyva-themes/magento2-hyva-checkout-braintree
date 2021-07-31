@@ -1,4 +1,4 @@
-import { __ } from '@hyva/react-checkout/../../i18n';
+import { __ } from '@hyva/payments/i18n';
 
 export function validate(braintreeNonce) {
     if (!braintreeNonce) {

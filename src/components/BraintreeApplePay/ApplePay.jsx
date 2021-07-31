@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
 
-import Card from '@hyva/react-checkout/../components/common/Card';
-import RadioInput from '@hyva/react-checkout/../components/common/Form/RadioInput';
+import Card from '@hyva/payments/components/common/Card';
+import RadioInput from '@hyva/payments/components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeApplePayConfig';
 import { ApplePaySession } from 'braintree-web';
@@ -10,7 +10,7 @@ import BraintreeClient from 'braintree-web/client';
 import BraintreeClientApplePay from 'braintree-web/apple-pay';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
-import setPaymentMethod from '../api/setPaymentMethod';
+import setPaymentMethod from '../../api/setPaymentMethod';
 
 
 function ApplePay({ method, selected, actions }) {
@@ -105,7 +105,7 @@ function ApplePay({ method, selected, actions }) {
         });
     };
     session.begin();
-  }, [braintreeApplePayClient, setErrorMessage, grandTotalAmount]);
+  }, [braintreeApplePayClient, setErrorMessage, grandTotalAmount, method.code]);
 
   const radioInputElement = (
     <RadioInput

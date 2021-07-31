@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import CheckoutFormContext from '@hyva/react-checkout/context/Form/CheckoutFormContext';
+import CheckoutFormContext from '@hyva/payments/context/Form/CheckoutFormContext';
 
 export default function useBraintreeCheckoutFormContext() {
   return useContext(CheckoutFormContext);

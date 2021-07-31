@@ -1,7 +1,7 @@
 import React from 'react';
 import { string } from 'prop-types';
 
-import { __ } from '@hyva/react-checkout/../i18n';
+import { __ } from '@hyva/payments/i18n';
 import paymentConfig  from './braintreeCreditCardConfig';
 
 function getCardTypeImageUrl(cardType) {

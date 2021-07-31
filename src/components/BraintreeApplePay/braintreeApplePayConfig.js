@@ -1,5 +1,5 @@
 
-import RootElement from '@hyva/react-checkout/../utils/rootElement';
+import RootElement from '@hyva/payments//utils/rootElement';
 
 const config = RootElement.getPaymentConfig();
 const brainTree = config.braintree_applepay;
