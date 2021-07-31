@@ -1,8 +1,8 @@
 import _get from 'lodash.get';
 
-import { __ } from '../../../../../../../i18n';
-import { _isArrayEmpty } from '../../../../../../../utils';
-import fetchGuestCartModifier from '../../../../../../../api/cart/fetchGuestCart/modifier';
+import { __ } from '@hyva/react-checkout/../../i18n';
+import { _isArrayEmpty } from '@hyva/react-checkout/../../utils';
+import fetchGuestCartModifier from '@hyva/react-checkout/../../api/cart/fetchGuestCart/modifier';
 
 export default function setPaymentMethodModifier(result) {
   const errors = _get(result, 'errors');

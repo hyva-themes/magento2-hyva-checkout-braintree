@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
 
-import Card from '../../../../../components/common/Card';
-import RadioInput from '../../../../../components/common/Form/RadioInput';
+import Card from '@hyva/react-checkout/../components/common/Card';
+import RadioInput from '@hyva/react-checkout/../components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeApplePayConfig';
 import { ApplePaySession } from 'braintree-web';
