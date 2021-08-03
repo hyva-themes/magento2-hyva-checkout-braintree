@@ -136,6 +136,14 @@ function BraintreeCreditCard({ method, selected, actions }) {
     authoriseBraintree();
   }, [isSelected, braintreeClient, setIFrameValid, setCardType]);
 
+  // If braintree is not selected reset client
+  useEffect( () => {
+    if ((!isSelected) && (braintreeClient)) {
+        setBraintreeClient(null);
+        setBraintreeHostedFields(null);
+    }
+  },[isSelected,braintreeClient]);
+
   // The iFrame form is valid and we don't have a nonce set tokenise the frame
   // and send the nonce to the server
   useEffect(() => {

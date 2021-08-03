@@ -47,7 +47,13 @@ function ApplePay({ method, selected, actions }) {
     authoriseBraintree();
   }, [isSelected, braintreeApplePayClient]);
 
-
+  // If braintree is not selected reset client
+  useEffect( () => {
+    if ((!isSelected) && (braintreeApplePayClient)) {
+        setBraintreeApplePayClient(null);
+    }
+  },[isSelected,braintreeApplePayClient]);
+  
   const handlePerformApplePay = useCallback(async () => {
     const paymentData = {total: {label: paymentConfig.merchantName, amount: grandTotalAmount}};
 

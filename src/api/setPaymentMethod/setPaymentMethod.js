@@ -1,6 +1,6 @@
 import { SET_PAYMENT_METHOD_MUTATION } from './mutation';
 import modifier from './modifier';
-import sendRequest from '@hyva/payments/api/sendRequest';
+import sendRequest from '../sendRequest';
 import LocalStorage from '@hyva/payments/utils/localStorage';
 
 export default async function setPaymentMethod(paymentMethod, paymentNonce) {

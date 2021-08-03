@@ -8,7 +8,7 @@ import { deviceSupported } from './utility';
 function ApplePayWrapper({ method, selected, actions }) {
 
   if (!deviceSupported()) {
-      return;
+      return (<></>);
   }
 
   return (
