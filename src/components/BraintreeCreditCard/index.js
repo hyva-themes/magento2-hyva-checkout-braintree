@@ -1,3 +1,3 @@
-import BraintreeCreditCard from './BraintreeCreditCard';
+import CreditCard from './CreditCard';
 
-export default BraintreeCreditCard;
+export default CreditCard;

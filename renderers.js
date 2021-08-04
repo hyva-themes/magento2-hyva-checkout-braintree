@@ -1,7 +1,7 @@
-import BraintreeCreditCard from './src/components/BraintreeCreditCard';
+import CreditCard from './src/components/BraintreeCreditCard';
 import ApplePayWrapper from './src/components/BraintreeApplePay';
 
 export default {
-    braintree: BraintreeCreditCard,
+    braintree: CreditCard,
     braintree_applepay: ApplePayWrapper,
 };

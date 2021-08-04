@@ -13,7 +13,7 @@ import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCheckoutFormContext from '../../hooks/useBraintreeCheckoutFormContext';
 import useBraintreeCC from './hooks/useBraintreeCC';
 import setPaymentMethod from '../../api/setPaymentMethod';
-function BraintreeCreditCard({ method, selected, actions }) {
+function CreditCard({ method, selected, actions }) {
   const { countryList, stateList } = useBraintreeAppContext();
   const { registerPaymentAction } = useBraintreeCheckoutFormContext();
   const { options } = useBraintreeBillingAddressContext(countryList, stateList);
@@ -188,10 +188,10 @@ function BraintreeCreditCard({ method, selected, actions }) {
   );
 }
 
-BraintreeCreditCard.propTypes = {
+CreditCard.propTypes = {
   actions: shape({ change: func }),
   method: paymentMethodShape.isRequired,
   selected: paymentMethodShape.isRequired,
 };
 
-export default BraintreeCreditCard;
+export default CreditCard;
