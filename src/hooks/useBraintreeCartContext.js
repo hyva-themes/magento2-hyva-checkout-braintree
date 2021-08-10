@@ -4,7 +4,7 @@ import _get from 'lodash.get';
 import CartContext from '@hyva/payments/context/Cart/CartContext';
 
 export default function useBraintreeCartContext() {
-  const [cartData, {setOrderInfo, placeOrder}] = useContext(CartContext);
+  const [cartData, {setCartInfo, setOrderInfo, placeOrder, addCartShippingAddress,setEmailOnGuestCart}] = useContext(CartContext);
   const cartId = _get(cartData, 'cart.id');
   const cart = _get(cartData, 'cart');
   const email = _get(cartData, 'cart.email');
@@ -19,5 +19,8 @@ export default function useBraintreeCartContext() {
     grandTotalAmount,
     placeOrder,
     setOrderInfo,
+    setCartInfo,
+    addCartShippingAddress,
+    setEmailOnGuestCart
   };
 }

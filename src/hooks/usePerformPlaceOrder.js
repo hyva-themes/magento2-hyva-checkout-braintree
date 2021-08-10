@@ -24,7 +24,7 @@ export default function usePerformPlaceOrder() {
           setOrderInfo(order);
         }
       } catch (error) {
-        console.error(error);
+        //console.error(error);
         setErrorMessage(
           __(
             'This transaction could not be performed. Please select another payment method.'
