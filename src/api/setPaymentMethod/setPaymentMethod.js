@@ -13,6 +13,7 @@ export default async function setPaymentMethod(paymentMethod, paymentNonce) {
     );
   }
   catch (error) {
+    console.log("did we get here");
     throw error;
   }
 }

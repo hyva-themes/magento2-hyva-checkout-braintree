@@ -13,6 +13,8 @@ mutation setEmailShippingMutation (
   $postcode: String,
   $country_code: String!,
   $telephone: String!,
+  $code: String!,
+  $payment_method_nonce: String!,
 ) {
   setGuestEmailOnCart(
     input: {
@@ -46,7 +48,23 @@ mutation setEmailShippingMutation (
     }
   ) {
     cart {
-      ${CART_DATA_FRAGMENT}
+      email
+    }
+  }
+  setPaymentMethodOnCart(
+    input: {
+      cart_id: $cartId
+      payment_method: {
+        code: $code,
+        braintree : {
+            payment_method_nonce: $payment_method_nonce,
+            is_active_payment_token_enabler: false
+        }
+      }
+    }
+  ) {
+  cart {
+    ${CART_DATA_FRAGMENT}
     }
   }
 }

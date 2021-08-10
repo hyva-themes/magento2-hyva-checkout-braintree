@@ -9,7 +9,6 @@ import BraintreeClient from 'braintree-web/client';
 import BraintreeClientGooglePay from 'braintree-web/google-payment';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
-import setPaymentMethod from '../../api/setPaymentMethod';
 import setEmailShipping from '../../api/setEmailShipping';
 import { prepareAddress } from './utility';
 
@@ -104,23 +103,16 @@ function GooglePay({ method, selected, actions }) {
       let newShippingAddress = prepareAddress(paymentData.shippingAddress);
       if (paymentData.email && paymentData.shippingAddress) {
         try {
-          setEmailShipping(paymentData.email, newShippingAddress).then(function(response) {
-            setCartInfo(response);
+          braintreeGooglePayClient.parseResponse(paymentData).then(function(response) {
+            setEmailShipping(paymentData.email, newShippingAddress,method.code, response.nonce)
+              .then(function(response) {
+                  setCartInfo(response);
+              });
           });
         }
         catch (error) {
           setErrorMessage(error);
         }
-      }
-      return braintreeGooglePayClient.parseResponse(paymentData);
-    }).then(function (result) {
-      try {
-        setPaymentMethod(method.code, result.nonce).then(function(response) {
-          setCartInfo(response);
-        });
-      }
-      catch (error) {
-        setErrorMessage(error.message);
       }
     }).catch(function (err) {
       // Handle errors

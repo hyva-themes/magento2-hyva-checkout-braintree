@@ -6,7 +6,6 @@ import BraintreeClient from 'braintree-web/client';
 import BraintreeClientGooglePay from 'braintree-web/google-payment';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
-import setPaymentMethod from '../../api/setPaymentMethod';
 import setEmailShipping from '../../api/setEmailShipping';
 import { prepareAddress } from './utility';
 
@@ -21,7 +20,7 @@ function GooglePayButton() {
 
   // add the gpay script in
   useEffect(() => {
-    if (typeof window.google.payments === 'undefined') {
+    if (typeof window.google === 'undefined') {
         const script = document.createElement('script');
         script.src = "https://pay.google.com/gp/p/js/pay.js";
         script.async = true;
@@ -102,23 +101,16 @@ function GooglePayButton() {
       let newShippingAddress = prepareAddress(paymentData.shippingAddress);
       if (paymentData.email && paymentData.shippingAddress) {
         try {
-          setEmailShipping(paymentData.email, newShippingAddress).then(function(response) {
-            setCartInfo(response);
+          braintreeGooglePayClient.parseResponse(paymentData).then(function(response) {
+          setEmailShipping(paymentData.email, newShippingAddress,'braintree_googlepay', response.nonce)
+            .then(function(response) {
+                setCartInfo(response);
+            });
           });
         }
         catch (error) {
           setErrorMessage(error);
         }
-      }
-      return braintreeGooglePayClient.parseResponse(paymentData);
-    }).then(function (result) {
-      try {
-        setPaymentMethod('braintree_googlepay', result.nonce).then(function(response) {
-          setCartInfo(response);
-        });
-      }
-      catch (error) {
-        setErrorMessage(error.message);
       }
     }).catch(function (err) {
       // Handle errors
@@ -127,13 +119,6 @@ function GooglePayButton() {
     });
   },[braintreeGooglePayClient, paymentsClient, grandTotalAmount, setErrorMessage, setCartInfo]);
 
-  // If braintree is not selected reset client
-  useEffect( () => {
-    if (braintreeGooglePayClient) {
-        setBraintreeGooglePayClient(null);
-    }
-  },[braintreeGooglePayClient]);
-  
   /* Indicates how Google Pay button will appear */
   const buttonStyle = {
     minWidth: "200px",
@@ -155,12 +140,8 @@ function GooglePayButton() {
   if (!gPayButtonReady) {
     return (
       <>
-        <div className="mx-4 my-4">
-          <Card bg="darker">
-              <div className="flex items-center justify-center py-4">
-                <button style={buttonStyle} type="button"/>                    
-              </div>
-          </Card>
+        <div className="flex items-center justify-center py-4">
+            <button style={buttonStyle} type="button"/>                    
         </div>
       </>
     );  
@@ -168,13 +149,9 @@ function GooglePayButton() {
 
   return (
     <>
-      <div className="mx-4 my-4">
-        <Card bg="darker">
-            <div className="flex items-center justify-center py-4">
-              <button style={buttonStyle} type="button" onClick={handlePerformGooglePay}/>                    
-            </div>
-        </Card>
-      </div>
+        <div className="flex items-center justify-center py-4">
+            <button style={buttonStyle} type="button" onClick={handlePerformGooglePay}/>                    
+        </div>
     </>
   );
 }
