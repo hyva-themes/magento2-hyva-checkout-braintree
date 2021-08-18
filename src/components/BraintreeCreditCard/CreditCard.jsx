@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
 
-import CCForm from './CCForm';
 import Card from '@hyva/payments/components/common/Card';
 import RadioInput from '@hyva/payments/components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
@@ -13,16 +12,17 @@ import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCheckoutFormContext from '../../hooks/useBraintreeCheckoutFormContext';
 import useBraintreeCC from './hooks/useBraintreeCC';
 import setPaymentMethod from '../../api/setPaymentMethod';
+import { getCardTypeImageUrl, hostedFieldsStyle, hostedFieldsDefinition } from './utility';
 function CreditCard({ method, selected, actions }) {
-  const { countryList, stateList } = useBraintreeAppContext();
+  const { countryList, stateList, setErrorMessage } = useBraintreeAppContext();
   const { registerPaymentAction } = useBraintreeCheckoutFormContext();
   const { options } = useBraintreeBillingAddressContext(countryList, stateList);
   const { handleCreditCardCheckThenPlaceOrder } = useBraintreeCC(method.code);
-  const [ iFrameValid, setIFrameValid ] = useState(false);
+  const [ isCCValid, setCCValid ] = useState(false);
   const [braintreeClient, setBraintreeClient] = useState(null);
   const [braintreeHostedFields, setBraintreeHostedFields] = useState(null);
+  const [creditCardNonce, setCreditCardNonce] = useState(null)
   const [cardType, setCardType] = useState(null);
-
   const isSelected = method.code === selected.code;
 
   /**
@@ -30,8 +30,8 @@ function CreditCard({ method, selected, actions }) {
    * is selected by the user.
    */
    const paymentSubmitHandler = useCallback(
-    async values => {
-      await handleCreditCardCheckThenPlaceOrder(values);
+    async (values,braintreeHostedFields) => {
+      await handleCreditCardCheckThenPlaceOrder(values,braintreeHostedFields);
       return false;
     },
     [handleCreditCardCheckThenPlaceOrder]
@@ -48,115 +48,69 @@ function CreditCard({ method, selected, actions }) {
   useEffect( () => {
     async function authoriseBraintree() {
       if ((isSelected) && (paymentConfig.clientToken) && (!braintreeClient)) {
-        await BraintreeClient.create({ authorization: paymentConfig.clientToken }, (err, clientInstance) => {
-          if (err) {
-            console.log(err);
-          } 
-          else {
+        await BraintreeClient.create({
+              authorization: paymentConfig.clientToken
+        }).then(function(clientInstance) {
             setBraintreeClient(clientInstance);
-            HostedFields.create({
-                client: clientInstance,
-                styles: { 'input': {
-                  'color': '#282c37',
-                  'font-size': '16px',
-                  'transition': 'color 0.1s',
-                },
-                ':focus': {
-                    'border-color': '#5db6e8'
-                },
-                // Style the text of an invalid input
-                'input.invalid': {
-                  'color': '#E53A40',
-                  'border-color': '#E53A40',
-                  'transform': 'translate3d(0, 0, 0)',
-                  'backface-visibility': 'hidden',
-                  'perspective': '1000px',
-                
-                },
-                '.valid': {
-                    'color': 'green'
-                },
-                // placeholder styles need to be individually adjusted
-                '::-webkit-input-placeholder': {
-                  'color': 'rgba(0,0,0,0.6)'
-                },
-                ':-moz-placeholder': {
-                  'color': 'rgba(0,0,0,0.6)'
-                },
-                '::-moz-placeholder': {
-                  'color': 'rgba(0,0,0,0.6)'
-                },
-                ':-ms-input-placeholder': {
-                  'color': 'rgba(0,0,0,0.6)'
-                },
-                // prevent IE 11 and Edge from
-                // displaying the clear button
-                // over the card brand icon
-                'input::-ms-clear': {
-                  opacity: '0'
-                }
-              },
-                fields: {
-                  number: { selector: '#card-number', placeholder: '4444 3333 2222 1111' },
-                  cvv: {selector: '#cvv', placeholder: '123' },
-                  expirationDate: { selector: '#expiration-date', placeholder: '08/2025' }
-                },
-              }, (err, hostedFields) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                setBraintreeHostedFields(hostedFields);
-                hostedFields.on('validityChange', function (event) {
-                  setIFrameValid(Object.keys(event.fields).every(function (key) {
-                    return event.fields[key].isValid;
-                  }));   
-                });
-                hostedFields.on('empty', function (event) {
-                  if (event.emittedBy === 'number') {
-                    setCardType('');
-                  }
-                });
-                hostedFields.on('cardTypeChange', function (event) {
-                    if (event.cards.length === 1) {
-                        setCardType(event.cards[0].type);
-                        // Change the CVV length for AmericanExpress cards
-                        if (event.cards[0].code.size === 4) {
-                          hostedFields.setAttribute({field: 'cvv',attribute: 'placeholder', value: '1234'});
-                        } 
-                    } else {
-                        hostedFields.setAttribute({field: 'cvv',attribute: 'placeholder', value: '123'});
-                    }
-                });
-            });
-          }
+            var options = {
+              client: clientInstance,
+              styles: hostedFieldsStyle,
+              fields: hostedFieldsDefinition,
+            };
+            return HostedFields.create(options);
+        }).then(function(hostedFieldsInstance) {
+          setBraintreeHostedFields(hostedFieldsInstance);
+          hostedFieldsInstance.on('validityChange', function (event) {
+            setCCValid(Object.keys(event.fields).every(function (key) {
+              return event.fields[key].isValid;
+            }));
+          });
+          hostedFieldsInstance.on('empty', function (event) {
+            if (event.emittedBy === 'number') {
+              setCardType('');
+            }
+          });
+          hostedFieldsInstance.on('cardTypeChange', function (event) {
+            if (event.cards.length === 1) {
+                setCardType(event.cards[0].type);
+                // Change the CVV length for AmericanExpress cards
+                if (event.cards[0].code.size === 4) {
+                  hostedFieldsInstance.setAttribute({field: 'cvv',attribute: 'placeholder', value: '1234'});
+                } 
+            } else {
+              hostedFieldsInstance.setAttribute({field: 'cvv',attribute: 'placeholder', value: '123'});
+            }
+          });
+        }).catch(function(error) {
+          setErrorMessage(error.message);
         });
       }
     }
     authoriseBraintree();
-  }, [isSelected, braintreeClient, setIFrameValid, setCardType]);
+  }, [isSelected, braintreeClient, setCCValid, setCardType, setErrorMessage]);
 
   // If braintree is not selected reset client
   useEffect( () => {
     if ((!isSelected) && (braintreeClient)) {
         setBraintreeClient(null);
         setBraintreeHostedFields(null);
+        setCreditCardNonce(null)
     }
   },[isSelected,braintreeClient]);
 
   // The iFrame form is valid and we don't have a nonce set tokenise the frame
   // and send the nonce to the server
   useEffect(() => {
-    if (iFrameValid) {
-      braintreeHostedFields.tokenize(options, (err, payload) => {
-        if (err) {
-            console.log(err);
-        } else {
-          setPaymentMethod(method.code,payload.nonce);
-        }
+    if ((isCCValid) && (!creditCardNonce)) {
+      braintreeHostedFields.tokenize(options)
+      .then(function(payload) {
+        setPaymentMethod(method.code,payload.nonce);
+        setCreditCardNonce(payload.nonce);
+      }).catch(function(error) {
+        setErrorMessage(error.message);
       });
     }
-  }, [iFrameValid, braintreeHostedFields, options, method.code ]);
+  }, [isCCValid, braintreeHostedFields, options, method.code, setErrorMessage, creditCardNonce]);
 
   const radioInputElement = (
     <RadioInput
@@ -176,12 +130,51 @@ function CreditCard({ method, selected, actions }) {
     );
   }
 
+  let detectedCard;
+  let availableCardTypes = paymentConfig.availableCardTypes;
+
+  detectedCard = availableCardTypes.find(
+    availableCard => paymentConfig.ccTypesMapper[cardType] === availableCard
+  );
+
+  if (detectedCard) {
+    availableCardTypes = [detectedCard];
+  }
+
   return (
     <>
       <div>{radioInputElement}</div>
       <div className="mx-4 my-4">
         <Card bg="darker">
-          <CCForm detectedCardType={cardType} />
+          <div className="w-full">
+            <div className="mt-2">
+              <div className="relative transition-transform">
+                <div className="flex space-x-2">
+                  {availableCardTypes.map(availableCard => (
+                    <img
+                      key={availableCard}
+                      alt={availableCard}
+                      className="w-auto h-8"
+                      src={getCardTypeImageUrl(availableCard)}
+                    />
+                  ))}
+                </div>
+                <label className="block text-lg mb-2 uppercase" for="card-number">Credit Card Number</label>
+                <div className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1" id="card-number"></div>
+              </div>
+            </div>
+
+            <div className="flex justify-around">
+              <div className="mr-1 w-full transition-transform" >
+                  <label className="block text-lg mb-2 uppercase" for="expiration-date">Expiry</label>
+                  <div className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1' id="expiration-date"></div>
+              </div>
+              <div className="w-full transition-transform">
+                  <label className="block text-lg mb-2 uppercase" for="cvv">CVV</label>
+                  <div className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1' id="cvv"></div>
+              </div>
+            </div>  
+          </div>
         </Card>
       </div>
     </>

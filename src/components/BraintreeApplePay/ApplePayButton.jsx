@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { func, shape } from 'prop-types';
+import { func, shape, bool } from 'prop-types';
 
-import Card from '@hyva/payments/components/common/Card';
-import RadioInput from '@hyva/payments/components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeApplePayConfig';
 import { ApplePaySession } from 'braintree-web';
@@ -12,17 +10,17 @@ import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import {applePayButtonStyle, prepareAddress} from './utility';
-function ApplePay({ method, selected, actions }) {
+
+function ApplePayButton({ buttonOnly = false }) {
   const { setErrorMessage} = useBraintreeAppContext();
   const { grandTotalAmount } = useBraintreeCartContext();
   const [braintreeApplePayClient, setBraintreeApplePayClient] = useState(null);
-  const isSelected = method.code === selected.code;
 
   // Initialise the iframe using the provided clientToken create a braintreeClient
   // Showing the card form within the payment method.
   useEffect( () => {
     async function authoriseBraintree() {
-      if ((isSelected) && (paymentConfig.clientToken) && (!braintreeApplePayClient)) {
+      if ((paymentConfig.clientToken) && (!braintreeApplePayClient)) {
         await BraintreeClient.create({
           authorization: paymentConfig.clientToken
         }).then(function(clientInstance) {
@@ -38,14 +36,7 @@ function ApplePay({ method, selected, actions }) {
       }
     }
     authoriseBraintree();
-  }, [isSelected, braintreeApplePayClient, setErrorMessage]);
-
-  // If braintree is not selected reset client
-  useEffect( () => {
-    if ((!isSelected) && (braintreeApplePayClient)) {
-        setBraintreeApplePayClient(null);
-    }
-  },[isSelected,braintreeApplePayClient]);
+  }, [braintreeApplePayClient, setErrorMessage]);
   
   const handlePerformApplePay = useCallback(async () => {
     const paymentData = {total: {label: paymentConfig.merchantName, amount: grandTotalAmount}};
@@ -96,7 +87,7 @@ function ApplePay({ method, selected, actions }) {
           token: event.payment.token
         }).then(function(payload) {
           console.log('nonce:', payload.nonce);
-          setEmailShippingPayment(emailAddress, newShippingAddress, method.code, payload.nonce)
+          setEmailShippingPayment(emailAddress, newShippingAddress, 'braintree_applepay', payload.nonce)
           session.completePayment(ApplePaySession.STATUS_SUCCESS);
         }).catch(function(tokenizeErr) {
           console.error('Error tokenizing Apple Pay:', tokenizeErr);
@@ -104,46 +95,26 @@ function ApplePay({ method, selected, actions }) {
         });
     };
     session.begin();
-  }, [braintreeApplePayClient, setErrorMessage, grandTotalAmount, method.code]);
-
-  const radioInputElement = (
-    <RadioInput
-      value={method.code}
-      label={method.title}
-      name="paymentMethod"
-      checked={isSelected}
-      onChange={actions.change}
-    />
-  );
-
-  if (!isSelected) {
-    return (
-      <>
-        {radioInputElement}
-      </>
-    );
-  }
+  }, [braintreeApplePayClient, setErrorMessage, grandTotalAmount]);
 
   return (
     <>
-      <div>{radioInputElement}</div>
       <div className="mx-4 my-4">
-        <Card bg="darker">
-            <div className="flex items-center justify-center py-4">
-                <button style={applePayButtonStyle}
-                        type="button"
-                        onClick={handlePerformApplePay}/>                    
-            </div>
-        </Card>
+        <div className="flex items-center justify-center py-4">
+            <button style={applePayButtonStyle}
+                    type="button"
+                    onClick={handlePerformApplePay}/>                    
+        </div>
       </div>
     </>
   );
 }
 
-ApplePay.propTypes = {
+ApplePayButton.propTypes = {
   actions: shape({ change: func }),
   method: paymentMethodShape.isRequired,
   selected: paymentMethodShape.isRequired,
+  buttonOnly: bool,
 };
 
-export default ApplePay;
+export default ApplePayButton;

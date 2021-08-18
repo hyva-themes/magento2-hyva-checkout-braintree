@@ -3,7 +3,7 @@ import modifier from './modifier';
 import sendRequest from '../sendRequest';
 import LocalStorage from '@hyva/payments/utils/localStorage';
 
-export default async function setEmailShipping(email, address, method, nonce) {
+export default async function setEmailShippingPayment(email, address, method, nonce) {
   try {
     const variables = { email: email,
                         firstname: address.firstname,

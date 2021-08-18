@@ -4,9 +4,18 @@ import { paymentMethodShape } from '../../utility';
 
 import ApplePay from './ApplePay';
 import { deviceSupported } from './utility';
-
+import paymentConfig from './braintreeApplePayConfig';
 function ApplePayWrapper({ method, selected, actions }) {
 
+  // Make sure we have a client Token
+  if (!paymentConfig.clientToken) {
+    return (
+      <>
+      </>
+    );
+  }
+
+  // If device is not an Apple Device
   if (!deviceSupported()) {
       return (<></>);
   }
