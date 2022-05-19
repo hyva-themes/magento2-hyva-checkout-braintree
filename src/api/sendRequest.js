@@ -37,22 +37,22 @@ export default function sendRequest(
     method: 'POST',
     body: JSON.stringify({ ...queryParams }),
   })
-  .then(response => {
-    if (response.ok && responseType === RESPONSE_TEXT) {
-      return response.text();
-    }
-    return response.json();
-  })
-  .then(response => {
-    if (!responseContainErrors(response) || !responseDataEmpty(response)) {
-      return response;
-    }
-    const errors = _get(response, 'errors', []);
-    const exception = new GraphQLResponseException(errors);
-    throw exception;
-  })
-  .catch(exception => {
+    .then(response => {
+      if (response.ok && responseType === RESPONSE_TEXT) {
+        return response.text();
+      }
+      return response.json();
+    })
+    .then(response => {
+      if (!responseContainErrors(response) || !responseDataEmpty(response)) {
+        return response;
+      }
+      const errors = _get(response, 'errors', []);
+      const exception = new GraphQLResponseException(errors);
+      throw exception;
+    })
+    .catch(exception => {
       console.error(exception);
       throw exception;
-  });
+    });
 }

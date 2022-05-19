@@ -8,6 +8,7 @@ export default async function setEmailShippingPayment(
   address,
   method,
   nonce) {
+
   const variables = {
     email: email,
     firstname: address.firstname,
@@ -23,5 +24,7 @@ export default async function setEmailShippingPayment(
     code: method,
     payment_method_nonce: nonce,
   };
-  return modifier(await sendRequest({ query: SET_EMAIL_SHIPPING_MUTATION, variables }));
+  return modifier(
+    await sendRequest({ query: SET_EMAIL_SHIPPING_MUTATION, variables })
+  );
 }

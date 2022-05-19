@@ -1,36 +1,39 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
-
+import { ApplePaySession } from 'braintree-web';
+import BraintreeClient from 'braintree-web/client';
+import BraintreeClientApplePay from 'braintree-web/apple-pay';
 import Card from '../../../../../components/common/Card';
 import RadioInput from '../../../../../components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeApplePayConfig';
-import { ApplePaySession } from 'braintree-web';
-import BraintreeClient from 'braintree-web/client';
-import BraintreeClientApplePay from 'braintree-web/apple-pay';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import {applePayButtonStyle, prepareAddress} from './utility';
+
 function ApplePay({ method, selected, actions }) {
-  const { setErrorMessage} = useBraintreeAppContext();
+  const { setErrorMessage } = useBraintreeAppContext();
   const { grandTotalAmount } = useBraintreeCartContext();
   const [braintreeApplePayClient, setBraintreeApplePayClient] = useState(null);
   const isSelected = method.code === selected.code;
 
   // Initialise the iframe using the provided clientToken create a braintreeClient
   // Showing the card form within the payment method.
-  useEffect( () => {
+  useEffect(() => {
     async function authoriseBraintree() {
-      if ((isSelected) && (paymentConfig.clientToken) && (!braintreeApplePayClient)) {
+      if (isSelected && paymentConfig.clientToken && !braintreeApplePayClient) {
         await BraintreeClient.create({
-          authorization: paymentConfig.clientToken
-        }).then(function(clientInstance) {
-          return BraintreeClientApplePay.create({
-            client: clientInstance
-          }).then(function(applePayInstance) {
+          authorization: paymentConfig.clientToken,
+        })
+          .then(function(clientInstance) {
+            return BraintreeClientApplePay.create({
+              client: clientInstance,
+            })
+          .then(function(applePayInstance) {
             setBraintreeApplePayClient(applePayInstance);
-          }).catch(function(applePayErr) {
+          })
+          .catch(function(applePayErr) {
             setErrorMessage(applePayErr.message);
             console.error(applePayErr);
           })
@@ -43,12 +46,16 @@ function ApplePay({ method, selected, actions }) {
   // If braintree is not selected reset client
   useEffect( () => {
     if ((!isSelected) && (braintreeApplePayClient)) {
-        setBraintreeApplePayClient(null);
+      setBraintreeApplePayClient(null);
     }
-  },[isSelected,braintreeApplePayClient]);
+  }, [isSelected, braintreeApplePayClient]);
   
   const handlePerformApplePay = useCallback(async () => {
-    const paymentData = {total: {label: paymentConfig.merchantName, amount: grandTotalAmount}};
+    const paymentData = {
+      total: {
+        label: paymentConfig.merchantName,
+        amount: grandTotalAmount
+    }};
     var paymentRequest = braintreeApplePayClient.createPaymentRequest(paymentData);
     if (!paymentRequest) {
         setErrorMessage("We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method.");
@@ -67,8 +74,8 @@ function ApplePay({ method, selected, actions }) {
     // Handle invalid merchant
     session.onvalidatemerchant = function (event) {
       braintreeApplePayClient.performValidation({
-          validationURL: event.validationURL,
-          displayName: paymentConfig.merchantName,
+        validationURL: event.validationURL,
+        displayName: paymentConfig.merchantName,
       }).then(function(merchantSession) {
         session.completeMerchantValidation(merchantSession);
       }).catch(function(validationErr) {
@@ -80,28 +87,30 @@ function ApplePay({ method, selected, actions }) {
 
     // Attach payment auth event
     session.onpaymentauthorized = function (event) {
-        // If requested, address information is accessible in event.payment
-        // and may also be sent to your server.
-        console.log('billingPostalCode:', event.payment.billingContact);
-        console.log('Your shipping address is:', event.payment.shippingContact);
-        let newShippingAddress = prepareAddress(event.payment.shippingContact);
-        let emailAddress = 'example@exmaple.com';
-        if (event.payment.billingContact.emailAddress) {
-          emailAddress = event.payment.billingContact.emailAddress;
-        }
-        else if (event.payment.shippingContact.emailAddress) {
-          emailAddress = event.payment.shippingContact.emailAddress;
-        }
-        braintreeApplePayClient.tokenize({
-          token: event.payment.token
-        }).then(function(payload) {
+      // If requested, address information is accessible in event.payment
+      // and may also be sent to your server.
+      console.log('billingPostalCode:', event.payment.billingContact);
+      console.log('Your shipping address is:', event.payment.shippingContact);
+      let newShippingAddress = prepareAddress(event.payment.shippingContact);
+      let emailAddress = 'example@exmaple.com';
+      if (event.payment.billingContact.emailAddress) {
+        emailAddress = event.payment.billingContact.emailAddress;
+      }
+      else if (event.payment.shippingContact.emailAddress) {
+        emailAddress = event.payment.shippingContact.emailAddress;
+      }
+      braintreeApplePayClient.tokenize({
+        token: event.payment.token
+      })
+        .then(function(payload) {
           console.log('nonce:', payload.nonce);
           setEmailShippingPayment(emailAddress, newShippingAddress, method.code, payload.nonce)
           session.completePayment(ApplePaySession.STATUS_SUCCESS);
-        }).catch(function(tokenizeErr) {
+      })
+        .catch(function(tokenizeErr) {
           console.error('Error tokenizing Apple Pay:', tokenizeErr);
           session.completePayment(ApplePaySession.STATUS_FAILURE);
-        });
+      });
     };
     session.begin();
   }, [braintreeApplePayClient, setErrorMessage, grandTotalAmount, method.code]);
@@ -129,11 +138,11 @@ function ApplePay({ method, selected, actions }) {
       <div>{radioInputElement}</div>
       <div className="mx-4 my-4">
         <Card bg="darker">
-            <div className="flex items-center justify-center py-4">
-                <button style={applePayButtonStyle}
-                        type="button"
-                        onClick={handlePerformApplePay}/>                    
-            </div>
+          <div className="flex items-center justify-center py-4">
+            <button style={applePayButtonStyle}
+              type="button"
+              onClick={handlePerformApplePay}/>                    
+          </div>
         </Card>
       </div>
     </>
