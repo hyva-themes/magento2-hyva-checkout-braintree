@@ -1,5 +1,5 @@
 
-import RootElement from '../../../../utils/rootElement';
+import RootElement from '../../../../../utils/rootElement';
 
 const config = RootElement.getPaymentConfig();
 const braintree = config.braintree;
