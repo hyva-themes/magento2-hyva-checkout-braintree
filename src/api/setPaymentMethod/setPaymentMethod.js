@@ -5,7 +5,7 @@ import LocalStorage from '../../../../../utils/localStorage';
 
 export default async function setPaymentMethod(paymentMethod, paymentNonce) {
   const variables = {
-    code: paymentMethod, 
+    code: paymentMethod,
     cartId: LocalStorage.getCartId(),
     payment_method_nonce: paymentNonce,
   };
