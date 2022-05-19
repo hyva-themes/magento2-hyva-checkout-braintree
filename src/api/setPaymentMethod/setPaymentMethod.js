@@ -4,17 +4,12 @@ import sendRequest from '../sendRequest';
 import LocalStorage from '../../../../../utils/localStorage';
 
 export default async function setPaymentMethod(paymentMethod, paymentNonce) {
-  try {
-    const variables = {
-      code: paymentMethod, 
-      cartId: LocalStorage.getCartId(),
-      payment_method_nonce: paymentNonce
-    };
-    return modifier(
-      await sendRequest({ query: SET_PAYMENT_METHOD_MUTATION, variables })
-    );
-  }
-  catch (error) {
-    throw error;
-  }
+  const variables = {
+    code: paymentMethod, 
+    cartId: LocalStorage.getCartId(),
+    payment_method_nonce: paymentNonce,
+  };
+  return modifier(
+    await sendRequest({ query: SET_PAYMENT_METHOD_MUTATION, variables })
+  );
 }

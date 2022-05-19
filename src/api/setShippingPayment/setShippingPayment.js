@@ -3,10 +3,7 @@ import modifier from './modifier';
 import sendRequest from '../sendRequest';
 import LocalStorage from '../../../../../utils/localStorage';
 
-export default async function setShippingPayment(
-  address,
-  method,
-  nonce) {
+export default async function setShippingPayment(address, method, nonce) {
   const variables = {
     firstname: address.firstname,
     lastname: address.lastname,

@@ -7,10 +7,10 @@ export default async function setEmailShippingPayment(
   email,
   address,
   method,
-  nonce) {
-
+  nonce
+) {
   const variables = {
-    email: email,
+    email,
     firstname: address.firstname,
     lastname: address.lastname,
     company: address.company,
