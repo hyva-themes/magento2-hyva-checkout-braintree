@@ -35,7 +35,8 @@ function ApplePay({ method, selected, actions }) {
             .catch(function (applePayErr) {
               setErrorMessage(applePayErr.message);
               console.error(applePayErr);
-            })});
+            });
+          });
       }
     }
     authoriseBraintree();
@@ -55,8 +56,8 @@ function ApplePay({ method, selected, actions }) {
         amount: grandTotalAmount,
       },
     };
-    const paymentRequest
-      = braintreeApplePayClient.createPaymentRequest(paymentData);
+    const paymentRequest = braintreeApplePayClient
+      .createPaymentRequest(paymentData);
     if (!paymentRequest) {
       setErrorMessage(
         "We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method."
@@ -69,24 +70,27 @@ function ApplePay({ method, selected, actions }) {
     }
     // Init apple pay session
     try {
-      let session = new window.ApplePaySession(3, paymentRequest);
+      const session = new window.ApplePaySession(3, paymentRequest);
       // Handle invalid merchant
       session.onvalidatemerchant = function (event) {
-        braintreeApplePayClient.performValidation({
-          validationURL: event.validationURL,
-          displayName: paymentConfig.merchantName,
-        })
-        .then(function (merchantSession) {
-          session.completeMerchantValidation(merchantSession);
-        })
-        .catch(function (validationErr) {
-          session.abort();
-          console.error(
-            'Braintree ApplePay Error validating merchant:',
-            validationErr
-          );
-          setErrorMessage("We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method.");
-        });        
+        braintreeApplePayClient
+          .performValidation({
+            validationURL: event.validationURL,
+            displayName: paymentConfig.merchantName,
+          })
+          .then(function (merchantSession) {
+            session.completeMerchantValidation(merchantSession);
+          })
+          .catch(function (validationErr) {
+            session.abort();
+            console.error(
+              'Braintree ApplePay Error validating merchant:',
+              validationErr
+            );
+            setErrorMessage(
+              "We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method."
+            );
+          });        
       };
 
       // Attach payment auth event
@@ -102,10 +106,10 @@ function ApplePay({ method, selected, actions }) {
           emailAddress = event.payment.shippingContact.emailAddress;
         }
         braintreeApplePayClient
-        .tokenize({
-          token: event.payment.token
-        })
-          .then(function(payload) {
+          .tokenize({
+            token: event.payment.token
+          })
+          .then(function (payload) {
             setEmailShippingPayment(
               emailAddress,
               newShippingAddress,
@@ -113,8 +117,8 @@ function ApplePay({ method, selected, actions }) {
               payload.nonce
             );
             session.completePayment(ApplePaySession.STATUS_SUCCESS);
-        })
-          .catch(function(tokenizeErr) {
+          })
+          .catch(function (tokenizeErr) {
             console.error('Error tokenizing Apple Pay:', tokenizeErr);
             session.completePayment(ApplePaySession.STATUS_FAILURE);
         });
@@ -140,9 +144,7 @@ function ApplePay({ method, selected, actions }) {
   );
 
   if (!isSelected) {
-    return (
-      <>{radioInputElement}</>
-    );
+    return (<>{radioInputElement}</>);
   }
 
   return (
