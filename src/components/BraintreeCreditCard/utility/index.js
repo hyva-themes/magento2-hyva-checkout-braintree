@@ -1,4 +1,4 @@
-import { __ } from '../../../../i18n';
+import { __ } from '../../../../../../i18n';
 import paymentConfig from '../braintreeCreditCardConfig';
 
 export function validate(hostedFieldsInstance) {

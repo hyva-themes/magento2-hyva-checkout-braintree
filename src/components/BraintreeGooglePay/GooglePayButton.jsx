@@ -7,7 +7,7 @@ import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import { prepareAddress, gPayButtonStyle } from './utility';
-import env from '../../../../utils/env';
+import env from '../../../../../utils/env';
 
 function GooglePayButton() {
   const { setErrorMessage } = useBraintreeAppContext();
