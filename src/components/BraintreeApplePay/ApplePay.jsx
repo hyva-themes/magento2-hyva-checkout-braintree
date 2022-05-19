@@ -25,37 +25,38 @@ function ApplePay({ method, selected, actions }) {
       if (isSelected && paymentConfig.clientToken && !braintreeApplePayClient) {
         await BraintreeClient.create({
           authorization: paymentConfig.clientToken,
-        }).then(function(clientInstance) {
+        }).then(function (clientInstance) {
           return BraintreeClientApplePay.create({
             client: clientInstance,
           })
-          .then(function (applePayInstance) {
-            setBraintreeApplePayClient(applePayInstance);
-          })
-          .catch(function(applePayErr) {
-            setErrorMessage(applePayErr.message);
-            console.error(applePayErr);
-          })});
+            .then(function (applePayInstance) {
+              setBraintreeApplePayClient(applePayInstance);
+            })
+            .catch(function (applePayErr) {
+              setErrorMessage(applePayErr.message);
+              console.error(applePayErr);
+            })});
       }
     }
     authoriseBraintree();
   }, [isSelected, braintreeApplePayClient, setErrorMessage]);
 
   // If braintree is not selected reset client
-  useEffect( () => {
+  useEffect(() => {
     if (!isSelected && braintreeApplePayClient) {
       setBraintreeApplePayClient(null);
     }
   }, [isSelected, braintreeApplePayClient]);
-  
+
   const handlePerformApplePay = useCallback(async () => {
     const paymentData = {
       total: {
         label: paymentConfig.merchantName,
         amount: grandTotalAmount,
-      }
+      },
     };
-    let paymentRequest = braintreeApplePayClient.createPaymentRequest(paymentData);
+    const paymentRequest
+      = braintreeApplePayClient.createPaymentRequest(paymentData);
     if (!paymentRequest) {
       setErrorMessage(
         "We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method."
@@ -68,58 +69,59 @@ function ApplePay({ method, selected, actions }) {
     }
     // Init apple pay session
     try {
-        let session = new window.ApplePaySession(3, paymentRequest);
-        // Handle invalid merchant
-        session.onvalidatemerchant = function (event) {
-          braintreeApplePayClient.performValidation({
-            validationURL: event.validationURL,
-            displayName: paymentConfig.merchantName,
-          }).then(function(merchantSession) {
-            session.completeMerchantValidation(merchantSession);
-          }).catch(function(validationErr) {
-            session.abort();
-            console.error('Braintree ApplePay Error validating merchant:', validationErr);
-            setErrorMessage("We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method.");
-          });        
-        };
+      let session = new window.ApplePaySession(3, paymentRequest);
+      // Handle invalid merchant
+      session.onvalidatemerchant = function (event) {
+        braintreeApplePayClient.performValidation({
+          validationURL: event.validationURL,
+          displayName: paymentConfig.merchantName,
+        })
+        .then(function (merchantSession) {
+          session.completeMerchantValidation(merchantSession);
+        })
+        .catch(function (validationErr) {
+          session.abort();
+          console.error(
+            'Braintree ApplePay Error validating merchant:',
+            validationErr
+          );
+          setErrorMessage("We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method.");
+        });        
+      };
 
-        // Attach payment auth event
-        session.onpaymentauthorized = function (event) {
-          // If requested, address information is accessible in event.payment
-          // and may also be sent to your server.
-          console.log('billingPostalCode:', event.payment.billingContact);
-          console.log('Your shipping address is:', event.payment.shippingContact);
-          let newShippingAddress = prepareAddress(event.payment.shippingContact);
-          let emailAddress = 'example@exmaple.com';
-          if (event.payment.billingContact.emailAddress) {
-            emailAddress = event.payment.billingContact.emailAddress;
-          }
-          else if (event.payment.shippingContact.emailAddress) {
-            emailAddress = event.payment.shippingContact.emailAddress;
-          }
-          braintreeApplePayClient.tokenize({
-            token: event.payment.token
-          })
-            .then(function(payload) {
-              setEmailShippingPayment(
-                emailAddress,
-                newShippingAddress,
-                method.code,
-                payload.nonce
-              );
-              session.completePayment(ApplePaySession.STATUS_SUCCESS);
-          })
-            .catch(function(tokenizeErr) {
-              console.error('Error tokenizing Apple Pay:', tokenizeErr);
-              session.completePayment(ApplePaySession.STATUS_FAILURE);
-          });
-        };
-        session.begin();
+      // Attach payment auth event
+      session.onpaymentauthorized = function (event) {
+        // If requested, address information is accessible in event.payment
+        // and may also be sent to your server.
+        const newShippingAddress = prepareAddress(event.payment.shippingContact);
+        let emailAddress = 'example@exmaple.com';
+        if (event.payment.billingContact.emailAddress) {
+          emailAddress = event.payment.billingContact.emailAddress;
+        }
+        else if (event.payment.shippingContact.emailAddress) {
+          emailAddress = event.payment.shippingContact.emailAddress;
+        }
+        braintreeApplePayClient
+        .tokenize({
+          token: event.payment.token
+        })
+          .then(function(payload) {
+            setEmailShippingPayment(
+              emailAddress,
+              newShippingAddress,
+              method.code,
+              payload.nonce
+            );
+            session.completePayment(ApplePaySession.STATUS_SUCCESS);
+        })
+          .catch(function(tokenizeErr) {
+            console.error('Error tokenizing Apple Pay:', tokenizeErr);
+            session.completePayment(ApplePaySession.STATUS_FAILURE);
+        });
+      };
+      session.begin();
     } catch (err) {
-      console.error(
-        'Braintree ApplePay Unable to create ApplePaySession',
-        err
-      );
+      console.error('Braintree ApplePay Unable to create ApplePaySession',err);
       setErrorMessage(
         "We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method."
       );
