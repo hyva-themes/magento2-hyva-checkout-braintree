@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { func, shape } from 'prop-types';
 
-import Card from '@hyva/payments/components/common/Card';
-import RadioInput from '@hyva/payments/components/common/Form/RadioInput';
+import Card from '../../../../components/common/Card';
+import RadioInput from '../../../../components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreePayPalConfig';
-import { SHIPPING_ADDR_FORM } from '@hyva/payments/config';
+import { SHIPPING_ADDR_FORM } from '../../../../config';
 import BraintreeClient from 'braintree-web/client';
 import BraintreeClientPayPal from 'braintree-web/paypal-checkout';
-import useFormikMemorizer from '@hyva/payments/hook/useFormikMemorizer';
+import useFormikMemorizer from '../../../../hook/useFormikMemorizer';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import { getCreatePaymentOptions, payPalButtonStyle, prepareAddress } from './utility';
-import env from '@hyva/payments/utils/env';
+import env from '../../../../utils/env';
 import setShippingPayment from '../../api/setShippingPayment';
 import setPaymentMethod from '../../api/setPaymentMethod';
 
