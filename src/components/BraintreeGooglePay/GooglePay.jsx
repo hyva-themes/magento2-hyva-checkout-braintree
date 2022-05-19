@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
 
-import Card from '@hyva/payments/components/common/Card';
-import RadioInput from '@hyva/payments/components/common/Form/RadioInput';
+import Card from '../../../../components/common/Card';
+import RadioInput from '../../../../components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeGooglePayConfig';
 import BraintreeClient from 'braintree-web/client';
@@ -11,7 +11,7 @@ import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import { prepareAddress, gPayButtonStyle } from './utility';
-import env from '@hyva/payments/utils/env';
+import env from '../../../../utils/env';
 function GooglePay({ method, selected, actions }) {
   const { setErrorMessage } = useBraintreeAppContext();
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();

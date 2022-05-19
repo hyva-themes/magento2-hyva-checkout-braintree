@@ -1,5 +1,5 @@
 
-import RootElement from '@hyva/payments//utils/rootElement';
+import RootElement from '../../../../utils/rootElement';
 
 const config = RootElement.getPaymentConfig();
 const brainTree = config.braintree_applepay;

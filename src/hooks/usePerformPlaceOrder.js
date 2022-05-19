@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { __ } from '@hyva/payments/i18n';
+import { __ } from '../../../../i18n';
 import { performRedirect } from '../utility';
 import useBraintreeAppContext from './useBraintreeAppContext';
 import useBraintreeCartContext from './useBraintreeCartContext';

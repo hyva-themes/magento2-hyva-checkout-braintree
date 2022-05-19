@@ -1,5 +1,5 @@
 
-import env from '@hyva/payments/utils/env';
+import env from '../../../../utils/env';
 
 export function prepareAddress(address) {
     let phoneNumber = '0000000000';

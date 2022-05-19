@@ -1,7 +1,7 @@
 import { SET_EMAIL_SHIPPING_MUTATION } from './mutation';
 import modifier from './modifier';
 import sendRequest from '../sendRequest';
-import LocalStorage from '@hyva/payments/utils/localStorage';
+import LocalStorage from '../../../../utils/localStorage';
 
 export default async function setEmailShippingPayment(email, address, method, nonce) {
   try {

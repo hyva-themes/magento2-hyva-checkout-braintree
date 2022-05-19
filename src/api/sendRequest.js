@@ -3,11 +3,11 @@ import {
   responseDataEmpty,
   responseContainErrors,
   GraphQLResponseException,
-} from '@hyva/payments/api/utility';
-import env from '@hyva/payments/utils/env';
-import { config } from '@hyva/payments/config';
-import RootElement from '@hyva/payments/utils/rootElement';
-import LocalStorage from '@hyva/payments/utils/localStorage';
+} from '../../../../api/utility';
+import env from '../../../../utils/env';
+import { config } from '../../../../config';
+import RootElement from '../../../../utils/rootElement';
+import LocalStorage from '../../../../utils/localStorage';
 
 export const RESPONSE_TEXT = 'text';
 export const RESPONSE_JSON = 'json';

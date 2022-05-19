@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import AppContext from '@hyva/payments/context/App/AppContext';
+import AppContext from '../../../../context/App/AppContext';
 
 export default function useBraintreeAppContext() {
   const [

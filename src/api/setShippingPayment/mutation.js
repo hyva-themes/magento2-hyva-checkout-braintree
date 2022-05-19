@@ -1,4 +1,4 @@
-import { CART_DATA_FRAGMENT } from '@hyva/payments/api/cart/utility/query/cartQueryInfo';
+import { CART_DATA_FRAGMENT } from '../../../../api/cart/utility/query/cartQueryInfo';
 
 export const SET_SHIPPING_PAYMENT_MUTATION = `
 mutation setShippingPaymentMutation (
