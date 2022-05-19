@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
 import { ApplePaySession } from 'braintree-web';
 import BraintreeClient from 'braintree-web/client';
@@ -36,7 +36,7 @@ function ApplePay({ method, selected, actions }) {
               setErrorMessage(applePayErr.message);
               console.error(applePayErr);
             });
-          });
+        });
       }
     }
     authoriseBraintree();
@@ -56,7 +56,8 @@ function ApplePay({ method, selected, actions }) {
         amount: grandTotalAmount,
       },
     };
-    const paymentRequest = braintreeApplePayClient
+    const paymentRequest =
+      braintreeApplePayClient
       .createPaymentRequest(paymentData);
     if (!paymentRequest) {
       setErrorMessage(
@@ -90,14 +91,16 @@ function ApplePay({ method, selected, actions }) {
             setErrorMessage(
               "We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method."
             );
-          });        
+          });
       };
 
       // Attach payment auth event
       session.onpaymentauthorized = function (event) {
         // If requested, address information is accessible in event.payment
         // and may also be sent to your server.
-        const newShippingAddress = prepareAddress(event.payment.shippingContact);
+        const newShippingAddress = prepareAddress(
+          event.payment.shippingContact
+        );
         let emailAddress = 'example@exmaple.com';
         if (event.payment.billingContact.emailAddress) {
           emailAddress = event.payment.billingContact.emailAddress;
@@ -107,7 +110,7 @@ function ApplePay({ method, selected, actions }) {
         }
         braintreeApplePayClient
           .tokenize({
-            token: event.payment.token
+            token: event.payment.token,
           })
           .then(function (payload) {
             setEmailShippingPayment(
@@ -144,7 +147,7 @@ function ApplePay({ method, selected, actions }) {
   );
 
   if (!isSelected) {
-    return (<>{radioInputElement}</>);
+    return {radioInputElement};
   }
 
   return (
