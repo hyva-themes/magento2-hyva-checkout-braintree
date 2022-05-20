@@ -122,7 +122,7 @@ function CreditCard({ method, selected, actions }) {
       braintreeHostedFields
         .tokenize(options)
         .then(function (payload) {
-          setPaymentMethod(method.code,payload.nonce);
+          setPaymentMethod(method.code, payload.nonce);
           setCreditCardNonce(payload.nonce);
         })
         .catch(function (error) {
@@ -182,13 +182,16 @@ function CreditCard({ method, selected, actions }) {
                 </div>
                 <label
                   className="block text-lg mb-2 uppercase"
-                  htmlFor="card-number">
-                    Credit Card Number
+                  htmlFor="card-number"
+                  label="credit card number"
+                >
+                  Credit Card Number
                 </label>
                 <div 
                   className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
                   id="card-number"
-                  label="card number">
+                  label="card number"
+                >
                 </div>
               </div>
             </div>
@@ -196,24 +199,31 @@ function CreditCard({ method, selected, actions }) {
               <div className="mr-1 w-full transition-transform" >
                 <label
                   className="block text-lg mb-2 uppercase"
-                  htmlFor="expiration-date">
-                    Expiry
+                  htmlFor="expiration-date"
+                  label="expiration date"
+                >
+                  Expiry
                 </label>
                 <div 
-                  className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1'
+                  className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
                   id="expiration-date"
-                  label="expiration date">
+                  label="expiration date"
+                >
                 </div>
               </div>
               <div className="w-full transition-transform">
                 <label
                   className="block text-lg mb-2 uppercase"
-                  htmlFor="cvv">
-                    CVV
+                  htmlFor="cvv"
+                  label="cvv"
+                >
+                  CVV
                 </label>
                 <div
-                  className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1'
-                  id="cvv">
+                  className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
+                  id="cvv"
+                  label="cvv"
+                >
                 </div>
               </div>
             </div>  
