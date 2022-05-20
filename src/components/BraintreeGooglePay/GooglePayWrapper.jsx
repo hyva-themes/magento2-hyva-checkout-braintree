@@ -14,7 +14,7 @@ function GooglePayWrapper({ method, selected, actions, buttonOnly = false }) {
   // GooglePay and GooglePayButton are very similar but there was
   // enough of a difference to seperate them out
   if (buttonOnly) {
-    return <GooglePayButton/>;
+    return <GooglePayButton />;
   }
 
   return <GooglePay method={method} selected={selected} actions={actions} />;

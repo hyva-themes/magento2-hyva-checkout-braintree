@@ -56,8 +56,7 @@ function GooglePayButton() {
           (err, clientInstance) => {
             if (err) {
               setErrorMessage(err);
-            }
-            else {
+            } else {
               BraintreeClientGooglePay.create({
                 client: clientInstance,
                 googlePayVersion: 2,
@@ -87,22 +86,23 @@ function GooglePayButton() {
           }
         );
       }
-    }                          
+    }
     authoriseBraintree();
   }, [paymentsClient, braintreeGooglePayClient, setErrorMessage]);
 
   const handlePerformGooglePay = useCallback(async () => {
-    const paymentDataRequest = braintreeGooglePayClient.createPaymentDataRequest({
-      transactionInfo: {
-        currencyCode: env.currencyCode,
-        totalPriceStatus: 'ESTIMATED',
-        totalPrice: String(grandTotalAmount), // Your amount
-      },
-      emailRequired: true,
-      shippingAddressRequired: true,
-      shippingAddressParameters: { phoneNumberRequired: true },
-    });
-    let cardPaymentMethod = paymentDataRequest.allowedPaymentMethods[0];
+    const paymentDataRequest =
+      braintreeGooglePayClient.createPaymentDataRequest({
+        transactionInfo: {
+          currencyCode: env.currencyCode,
+          totalPriceStatus: 'ESTIMATED',
+          totalPrice: String(grandTotalAmount), // Your amount
+        },
+        emailRequired: true,
+        shippingAddressRequired: true,
+        shippingAddressParameters: { phoneNumberRequired: true },
+      });
+    const cardPaymentMethod = paymentDataRequest.allowedPaymentMethods[0];
     cardPaymentMethod.parameters.billingAddressRequired = true;
     cardPaymentMethod.parameters.billingAddressParameters = {
       format: 'FULL',
@@ -115,18 +115,17 @@ function GooglePayButton() {
         if (paymentData.email && paymentData.shippingAddress) {
           try {
             braintreeGooglePayClient
-            .parseResponse(paymentData)
-            .then(function(response) {
-              setEmailShippingPayment(
-                paymentData.email,
-                newShippingAddress,
-                'braintree_googlepay',
-                response.nonce
-              )
-              .then(function (responseShipping) {
-                  setCartInfo(responseShipping);
+              .parseResponse(paymentData)
+              .then(function (response) {
+                setEmailShippingPayment(
+                  paymentData.email,
+                  newShippingAddress,
+                  'braintree_googlepay',
+                  response.nonce
+                ).then(function (responseShipping) {
+                    setCartInfo(responseShipping);
+                });
               });
-            });
           }
           catch (error) {
             setErrorMessage(error);
