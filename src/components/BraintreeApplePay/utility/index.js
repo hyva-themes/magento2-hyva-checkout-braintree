@@ -8,7 +8,7 @@ export function deviceSupported() {
 
   if (
     (window.ApplePaySession && window.ApplePaySession.canMakePayments()) !==
-      true
+    true
   ) {
     console.warn('Braintree Apple Pay is not supported on this device/browser');
     return false;

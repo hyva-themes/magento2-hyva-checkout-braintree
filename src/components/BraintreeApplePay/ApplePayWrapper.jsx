@@ -9,12 +9,12 @@ import paymentConfig from './braintreeApplePayConfig';
 function ApplePayWrapper({ method, selected, actions }) {
   // Make sure we have a client Token
   if (!paymentConfig.clientToken) {
-    return <></>;
+    return null;
   }
 
   // If device is not an Apple Device
   if (!deviceSupported()) {
-    return <></>;
+    return null;
   }
 
   return <ApplePay method={method} selected={selected} actions={actions} />;

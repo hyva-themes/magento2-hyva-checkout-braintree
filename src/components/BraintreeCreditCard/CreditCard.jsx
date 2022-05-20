@@ -45,8 +45,7 @@ function CreditCard({ method, selected, actions }) {
   // to do the place order action in the case this payment method is selected.
   useEffect(() => {
     registerPaymentAction(method.code, paymentSubmitHandler);
-  }, [method, registerPaymentAction, paymentSubmitHandler]
-  );
+  }, [method, registerPaymentAction, paymentSubmitHandler]);
 
   // Initialise the iframe using the provided clientToken create a braintreeClient
   // Showing the card form within the payment method.
@@ -87,19 +86,19 @@ function CreditCard({ method, selected, actions }) {
                   hostedFieldsInstance.setAttribute({
                     field: 'cvv',
                     attribute: 'placeholder',
-                    value: '1234'
+                    value: '1234',
                   });
-                } 
+                }
               } else {
                 hostedFieldsInstance.setAttribute({
                   field: 'cvv',
                   attribute: 'placeholder',
-                  value: '123'
+                  value: '123',
                 });
               }
             });
           })
-          .catch(function(error) {
+          .catch(function (error) {
             setErrorMessage(error.message);
           });
       }
@@ -108,27 +107,36 @@ function CreditCard({ method, selected, actions }) {
   }, [isSelected, braintreeClient, setCCValid, setCardType, setErrorMessage]);
 
   // If braintree is not selected reset client
-  useEffect( () => {
-    if ((!isSelected) && (braintreeClient)) {
-        setBraintreeClient(null);
-        setBraintreeHostedFields(null);
-        setCreditCardNonce(null)
+  useEffect(() => {
+    if (!isSelected && braintreeClient) {
+      setBraintreeClient(null);
+      setBraintreeHostedFields(null);
+      setCreditCardNonce(null)
     }
-  },[isSelected,braintreeClient]);
+  },[isSelected, braintreeClient]);
 
   // The iFrame form is valid and we don't have a nonce set tokenise the frame
   // and send the nonce to the server
   useEffect(() => {
-    if ((isCCValid) && (!creditCardNonce)) {
-      braintreeHostedFields.tokenize(options)
-      .then(function(payload) {
-        setPaymentMethod(method.code,payload.nonce);
-        setCreditCardNonce(payload.nonce);
-      }).catch(function(error) {
-        setErrorMessage(error.message);
-      });
+    if (isCCValid && !creditCardNonce) {
+      braintreeHostedFields
+        .tokenize(options)
+        .then(function(payload) {
+          setPaymentMethod(method.code,payload.nonce);
+          setCreditCardNonce(payload.nonce);
+        })
+        .catch(function(error) {
+          setErrorMessage(error.message);
+        });
     }
-  }, [isCCValid, braintreeHostedFields, options, method.code, setErrorMessage, creditCardNonce]);
+  }, [
+    isCCValid,
+    braintreeHostedFields,
+    options,
+    method.code,
+    setErrorMessage,
+    creditCardNonce,
+  ]);
 
   const radioInputElement = (
     <RadioInput
@@ -141,14 +149,14 @@ function CreditCard({ method, selected, actions }) {
   );
 
   if (!isSelected) {
-    return {radioInputElement};
+    return { radioInputElement };
   }
 
   let detectedCard;
   let availableCardTypes = paymentConfig.availableCardTypes;
 
   detectedCard = availableCardTypes.find(
-    availableCard => paymentConfig.ccTypesMapper[cardType] === availableCard
+    (availableCard) => paymentConfig.ccTypesMapper[cardType] === availableCard
   );
 
   if (detectedCard) {
@@ -170,21 +178,31 @@ function CreditCard({ method, selected, actions }) {
                       alt={availableCard}
                       className="w-auto h-8"
                       src={getCardTypeImageUrl(availableCard)}
+                      label="card image"
                     />
                   ))}
                 </div>
                 <label className="block text-lg mb-2 uppercase" for="card-number">Credit Card Number</label>
-                <div className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1" id="card-number"></div>
+                <div 
+                  className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
+                  id="card-number">
+                </div>
               </div>
             </div>
             <div className="flex justify-around">
               <div className="mr-1 w-full transition-transform" >
-                <label className="block text-lg mb-2 uppercase" for="expiration-date">Expiry</label>
-                <div className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1' id="expiration-date"></div>
+                <label className="block text-lg mb-2 uppercase" htmlFor="expiration-date">Expiry</label>
+                <div 
+                  className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1'
+                  id="expiration-date">  
+                </div>
               </div>
               <div className="w-full transition-transform">
-                <label className="block text-lg mb-2 uppercase" for="cvv">CVV</label>
-                <div className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1' id="cvv"></div>
+                <label className="block text-lg mb-2 uppercase" htmlFor="cvv">CVV</label>
+                <div
+                  className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1'
+                  id="cvv">
+                </div>
               </div>
             </div>  
           </div>
@@ -195,6 +213,7 @@ function CreditCard({ method, selected, actions }) {
 }
 
 CreditCard.propTypes = {
+  actions: shape({ change: func }),
   method: paymentMethodShape.isRequired,
   selected: paymentMethodShape.isRequired,
 };

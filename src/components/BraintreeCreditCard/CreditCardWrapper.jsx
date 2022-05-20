@@ -6,16 +6,10 @@ import paymentConfig from './braintreeCreditCardConfig';
 import CreditCard from './CreditCard';
 
 function CreditCardWrapper({ method, selected, actions }) {
-
   if (!paymentConfig.isActive) {
-      return (<></>);
+      return null;
   }
-
-  return (
-    <>
-      <CreditCard method={method} selected={selected} actions={actions}/>
-    </>
-  );
+  return <CreditCard method={method} selected={selected} actions={actions}/>;
 }
 
 CreditCardWrapper.propTypes = {

@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
-
+import BraintreeClient from 'braintree-web/client';
+import BraintreeClientGooglePay from 'braintree-web/google-payment';
 import Card from '../../../../../components/common/Card';
 import RadioInput from '../../../../../components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeGooglePayConfig';
-import BraintreeClient from 'braintree-web/client';
-import BraintreeClientGooglePay from 'braintree-web/google-payment';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import { prepareAddress, gPayButtonStyle } from './utility';
 import env from '../../../../../utils/env';
+
 function GooglePay({ method, selected, actions }) {
   const { setErrorMessage } = useBraintreeAppContext();
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();
@@ -25,9 +25,11 @@ function GooglePay({ method, selected, actions }) {
   // add the gpay script in
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = "https://pay.google.com/gp/p/js/pay.js";
+    script.src = 'https://pay.google.com/gp/p/js/pay.js';
     script.async = true;
-    script.onload = () => { setGPayLoaded(true); };
+    script.onload = () => { 
+      setGPayLoaded(true);
+    };
     document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
@@ -44,36 +46,39 @@ function GooglePay({ method, selected, actions }) {
   // Showing the card form within the payment method.
   useEffect( () => {
     async function authoriseBraintree() {
-      if ((isSelected) && (paymentConfig.clientToken) && (!braintreeGooglePayClient) && (paymentsClient)) {
-        await BraintreeClient.create({ authorization: paymentConfig.clientToken }, (err, clientInstance) => {
+      if (isSelected && paymentConfig.clientToken && !braintreeGooglePayClient && paymentsClient) {
+        await BraintreeClient.create({
+          authorization: paymentConfig.clientToken,
+         }, (err, clientInstance) => {
           if (err) {
-            console.log(err);
             setErrorMessage(err);
             return;
           } 
           else {
             BraintreeClientGooglePay.create({
-                client: clientInstance,
-                googlePayVersion: 2,
-                googleMerchantId: paymentConfig.merchantId
-            }).then(function (googlePaymentInstance) {
-                setBraintreeGooglePayClient(googlePaymentInstance);
-                return paymentsClient.isReadyToPay({
-                  // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
-                  apiVersion: 2,
-                  apiVersionMinor: 0,
-                  allowedPaymentMethods: paymentConfig.cardTypes,
-                  existingPaymentMethodRequired: true
-                });
-            }).then(function (isReadyToPay) {
+              client: clientInstance,
+              googlePayVersion: 2,
+              googleMerchantId: paymentConfig.merchantId,
+            })
+            .then(function (googlePaymentInstance) {
+              setBraintreeGooglePayClient(googlePaymentInstance);
+              return paymentsClient.isReadyToPay({
+                // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
+                apiVersion: 2,
+                apiVersionMinor: 0,
+                allowedPaymentMethods: paymentConfig.cardTypes,
+                existingPaymentMethodRequired: true,
+              });
+            })
+            .then(function (isReadyToPay) {
               if (isReadyToPay.result) {
                 // need to put something here to make sure the button is valid
                 setgPayButtonReady(true);
               }
-            }).catch(function (err) {
+            })
+            .catch(function (err) {
               // Handle creation errors
               setErrorMessage(err);
-              console.log(err);
             });
           }
         });
@@ -139,13 +144,8 @@ function GooglePay({ method, selected, actions }) {
   );
 
   if (!isSelected) {
-    return (
-      <>
-        {radioInputElement}
-      </>
-    );
+    return {radioInputElement};
   }
-
 
   if (!gPayButtonReady) {
     return (
@@ -153,9 +153,13 @@ function GooglePay({ method, selected, actions }) {
         <div>{radioInputElement}</div>
         <div className="mx-4 my-4">
           <Card bg="darker">
-              <div className="flex items-center justify-center py-4">
-                <button style={gPayButtonStyle} type="button"/>                    
-              </div>
+            <div className="flex items-center justify-center py-4">
+              <button
+                style={gPayButtonStyle}
+                type="button"
+                label="google pay button"
+              />
+            </div>
           </Card>
         </div>
       </>
@@ -168,7 +172,12 @@ function GooglePay({ method, selected, actions }) {
       <div className="mx-4 my-4">
         <Card bg="darker">
             <div className="flex items-center justify-center py-4">
-              <button style={gPayButtonStyle} type="button" onClick={handlePerformGooglePay}/>                    
+              <button
+                style={gPayButtonStyle}
+                type="button"
+                onClick={handlePerformGooglePay}
+                label="google pay button"
+              />                    
             </div>
         </Card>
       </div>
