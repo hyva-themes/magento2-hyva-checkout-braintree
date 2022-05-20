@@ -80,19 +80,16 @@ function PayPal({ method, selected, actions }) {
                               setCartInfo(response);
                             });
                           } else {
-                            setPaymentMethod(method.code, payload.nonce)
-                              .then(function (response) {
+                            setPaymentMethod(method.code, payload.nonce).then(function (response) {
                                 setCartInfo(response);
-                              }
-                            );
+                            });
                           }
                         });
                     },
                     onError (error) {
                       console.error('PayPal error', error);
                     },
-                  })
-                  .render('#paypal-button');
+                  }).render('#paypal-button');
               })
               .then(function () {
                 // The PayPal button will be rendered in an html element with the ID
@@ -107,7 +104,6 @@ function PayPal({ method, selected, actions }) {
       }
     }
     authoriseBraintree();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSelected, payPalLoaded, setErrorMessage]);
 
   // If braintree is not selected reset client
