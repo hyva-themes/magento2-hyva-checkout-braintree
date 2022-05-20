@@ -13,7 +13,7 @@ import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import {
   getCreatePaymentOptions,
   payPalButtonStyle,
-  prepareAddress
+  prepareAddress,
 } from './utility';
 import env from '../../../../../utils/env';
 import setShippingPayment from '../../api/setShippingPayment';
@@ -33,71 +33,79 @@ function PayPal({ method, selected, actions }) {
   );
   // Initialise the iframe using the provided clientToken create a braintreeClient
   // Showing the card form within the payment method.
-  useEffect( () => {
+  useEffect(() => {
     async function authoriseBraintree() {
       if (isSelected && paymentConfig.clientToken && !payPalLoaded) {
-        await BraintreeClient.create({
-          authorization: paymentConfig.clientToken
-        })
-        .then(function (clientInstance) {
-          return BraintreeClientPayPal.create({
-            client: clientInstance,
-          });
-        })
-        .then(function (paypalCheckoutInstance) {
-          // Load the PayPal JS SDK (see Load the PayPal JS SDK section)
-          paypalCheckoutInstance
-            .loadPayPalSDK({
-              // need to set this to the currency of the checkout in the future
-              currency: env.currencyCode,
-              intent: 'capture',
-            })
-            .then(function (paypalCheckoutInstance) {
-              // The PayPal script is now loaded on the page and
-              // window.paypal.Buttons is now available to use
-              // render the PayPal button (see Render the PayPal Button section)
-              return window.paypal.Buttons({
-                style: payPalButtonStyle,
-                fundingSource: window.paypal.FUNDING.PAYPAL,
-                createOrder: function () {
-                  return paypalCheckoutInstance.createPayment(createPaymentOptions);
-                },
-                onApprove: function (data, actions) {
-                  return paypalCheckoutInstance.tokenizePayment(data).then(function (payload) {
-                    // Submit `payload.nonce` to your server
-                    console.log(payload.details);
-                    let newShippingAddress = prepareAddress(payload.details);
-                    if (typeof formSectionErrors !== 'undefined') {
-                      setShippingPayment(newShippingAddress, method.code, payload.nonce).then(function(response) {
-                        setCartInfo(response);
-                      });
-                    }
-                    else {
-                      setPaymentMethod(method.code, payload.nonce).then(function(response) {
-                        setCartInfo(response);
-                      });
-                    }
-                  });
-                },
-                onCancel: function (data) {
-                  console.log('PayPal payment cancelled', JSON.stringify(data, 0, 2));
-                },
-                onError: function (err) {
-                  console.error('PayPal error', err);
-                }
-              })
-              .render('#paypal-button');
-            })
-            .then(function () {
-              // The PayPal button will be rendered in an html element with the ID
-              // `paypal-button`. This function will be called when the PayPal button
-              // is set up and ready to be used
-              setPayPalLoaded(true);
+        await BraintreeClient
+          .create({
+            authorization: paymentConfig.clientToken,
+          })
+          .then(function (clientInstance) {
+            return BraintreeClientPayPal.create({
+              client: clientInstance,
             });
-        })
-        .catch(function (err) {
-          // Handle component creation error
-        });
+          })
+          .then(function (paypalCheckoutInstance) {
+            // Load the PayPal JS SDK (see Load the PayPal JS SDK section)
+            paypalCheckoutInstance
+              .loadPayPalSDK({
+                // need to set this to the currency of the checkout in the future
+                currency: env.currencyCode,
+                intent: 'capture',
+              })
+              .then(function (paypalCheckoutInstance) {
+                // The PayPal script is now loaded on the page and
+                // window.paypal.Buttons is now available to use
+                // render the PayPal button (see Render the PayPal Button section)
+                return window.paypal
+                  .Buttons({
+                    style: payPalButtonStyle,
+                    fundingSource: window.paypal.FUNDING.PAYPAL,
+                    createOrder: function () {
+                      return paypalCheckoutInstance.createPayment(createPaymentOptions);
+                    },
+                    onApprove: function (data, actions) {
+                      return paypalCheckoutInstance
+                        .tokenizePayment(data)
+                        .then(function (payload) {
+                          // Submit `payload.nonce` to your server
+                          console.log(payload.details);
+                          const newShippingAddress = prepareAddress(payload.details);
+                          if (typeof formSectionErrors !== 'undefined') {
+                            setShippingPayment(newShippingAddress, method.code, payload.nonce)
+                              .then(function(response) {
+                                setCartInfo(response);
+                              }
+                            );
+                          }
+                          else {
+                            setPaymentMethod(method.code, payload.nonce)
+                              .then(function(response) {
+                                setCartInfo(response);
+                              }
+                            );
+                          }
+                        });
+                    },
+                    onCancel: function (data) {
+                      console.log('PayPal payment cancelled', JSON.stringify(data, 0, 2));
+                    },
+                    onError: function (err) {
+                      console.error('PayPal error', err);
+                    }
+                  })
+                  .render('#paypal-button');
+              })
+              .then(function () {
+                // The PayPal button will be rendered in an html element with the ID
+                // `paypal-button`. This function will be called when the PayPal button
+                // is set up and ready to be used
+                setPayPalLoaded(true);
+              });
+          })
+          .catch(function (err) {
+            // Handle component creation error
+          });
       }
     }
     authoriseBraintree();
