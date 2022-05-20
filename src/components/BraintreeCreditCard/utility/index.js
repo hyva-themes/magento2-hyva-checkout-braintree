@@ -1,20 +1,19 @@
-import { __ } from '../../../../../../i18n';
 import paymentConfig from '../braintreeCreditCardConfig';
 
 export function validate(hostedFieldsInstance) {
-    var state = hostedFieldsInstance.getState();
-    var formValid = Object.keys(state.fields).every(function (key) {
-      return state.fields[key].isValid;
-    });
-    if (!formValid) {
-      return {
-        isValid: false,
-        message: 'Make sure the Credit Card fields are filled in correctly',
-      };    
-    }
+  var state = hostedFieldsInstance.getState();
+  var formValid = Object.keys(state.fields).every(function (key) {
+    return state.fields[key].isValid;
+  });
+  if (!formValid) {
     return {
-      isValid: true,
-    };
+      isValid: false,
+      message: 'Make sure the Credit Card fields are filled in correctly',
+    };    
+  }
+  return {
+    isValid: true,
+  };
 }
 
 export function getCardTypeImageUrl(cardType) {
@@ -33,7 +32,7 @@ export const hostedFieldsDefinition = {
   expirationDate: {
     selector: '#expiration-date',
     placeholder: '11/2025',
-  }
+  },
 };
 
 export const hostedFieldsStyle = {

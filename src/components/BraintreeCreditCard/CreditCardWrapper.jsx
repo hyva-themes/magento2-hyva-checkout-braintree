@@ -7,9 +7,9 @@ import CreditCard from './CreditCard';
 
 function CreditCardWrapper({ method, selected, actions }) {
   if (!paymentConfig.isActive) {
-      return null;
+    return null;
   }
-  return <CreditCard method={method} selected={selected} actions={actions}/>;
+  return <CreditCard method={method} selected={selected} actions={actions} />;
 }
 
 CreditCardWrapper.propTypes = {

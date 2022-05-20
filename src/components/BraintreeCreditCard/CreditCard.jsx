@@ -111,9 +111,9 @@ function CreditCard({ method, selected, actions }) {
     if (!isSelected && braintreeClient) {
       setBraintreeClient(null);
       setBraintreeHostedFields(null);
-      setCreditCardNonce(null)
+      setCreditCardNonce(null);
     }
-  },[isSelected, braintreeClient]);
+  }, [isSelected, braintreeClient]);
 
   // The iFrame form is valid and we don't have a nonce set tokenise the frame
   // and send the nonce to the server
@@ -121,11 +121,11 @@ function CreditCard({ method, selected, actions }) {
     if (isCCValid && !creditCardNonce) {
       braintreeHostedFields
         .tokenize(options)
-        .then(function(payload) {
+        .then(function (payload) {
           setPaymentMethod(method.code,payload.nonce);
           setCreditCardNonce(payload.nonce);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           setErrorMessage(error.message);
         });
     }
@@ -152,10 +152,8 @@ function CreditCard({ method, selected, actions }) {
     return { radioInputElement };
   }
 
-  let detectedCard;
   let availableCardTypes = paymentConfig.availableCardTypes;
-
-  detectedCard = availableCardTypes.find(
+  const detectedCard = availableCardTypes.find(
     (availableCard) => paymentConfig.ccTypesMapper[cardType] === availableCard
   );
 
@@ -182,23 +180,37 @@ function CreditCard({ method, selected, actions }) {
                     />
                   ))}
                 </div>
-                <label className="block text-lg mb-2 uppercase" for="card-number">Credit Card Number</label>
+                <label
+                  className="block text-lg mb-2 uppercase"
+                  htmlFor="card-number">
+                    Credit Card Number
+                </label>
                 <div 
                   className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
-                  id="card-number">
+                  id="card-number"
+                  label="card number">
                 </div>
               </div>
             </div>
             <div className="flex justify-around">
               <div className="mr-1 w-full transition-transform" >
-                <label className="block text-lg mb-2 uppercase" htmlFor="expiration-date">Expiry</label>
+                <label
+                  className="block text-lg mb-2 uppercase"
+                  htmlFor="expiration-date">
+                    Expiry
+                </label>
                 <div 
                   className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1'
-                  id="expiration-date">  
+                  id="expiration-date"
+                  label="expiration date">
                 </div>
               </div>
               <div className="w-full transition-transform">
-                <label className="block text-lg mb-2 uppercase" htmlFor="cvv">CVV</label>
+                <label
+                  className="block text-lg mb-2 uppercase"
+                  htmlFor="cvv">
+                    CVV
+                </label>
                 <div
                   className='rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1'
                   id="cvv">
