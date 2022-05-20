@@ -56,35 +56,27 @@ function PayPal({ method, selected, actions }) {
                 // The PayPal script is now loaded on the page and
                 // window.paypal.Buttons is now available to use
                 // render the PayPal button (see Render the PayPal Button section)
-                const { PAYPAL } = window.paypal.FUNDING;
-                return window.paypal
+                const { PAYPAL } = ;
                   .Buttons({
                     style: payPalButtonStyle,
-                    fundingSource: PAYPAL,
-                    createOrder: function () {
-                      return paypalCheckout.createPayment(
-                        createPaymentOptions
-                      );
+                    fundingSource: window.paypal.FUNDING.PAYPAL,
+                    createOrder () {
+                      return paypalCheckout.createPayment(createPaymentOptions);
                     },
-                    onApprove: function (data, actions) {
+                    onApprove (data) {
                       return paypalCheckout
                         .tokenizePayment(data)
                         .then(function (payload) {
-                          const { details } = payload;
                           // Submit `payload.nonce` to your server
-                          const newShippingAddress = prepareAddress(
-                            details
-                          );
+                          const newShippingAddress = prepareAddress(payload.details);
                           if (typeof formSectionErrors !== 'undefined') {
                             setShippingPayment(
                               newShippingAddress,
                               method.code,
                               payload.nonce
-                            )
-                              .then(function(response) {
+                            ).then(function(response) {
                                 setCartInfo(response);
-                              }
-                            );
+                            });
                           }
                           else {
                             setPaymentMethod(method.code, payload.nonce)
@@ -95,12 +87,11 @@ function PayPal({ method, selected, actions }) {
                           }
                         });
                     },
-                    onCancel: function (data) {
-                      console.log('PayPal payment cancelled', JSON.stringify(data, 0, 2));
+                    onCancel (data) {
                     },
-                    onError: function (err) {
-                      console.error('PayPal error', err);
-                    }
+                    onError (error) {
+                      console.error('PayPal error', error);
+                    },
                   })
                   .render('#paypal-button');
               })
@@ -111,7 +102,7 @@ function PayPal({ method, selected, actions }) {
                 setPayPalLoaded(true);
               });
           })
-          .catch(function (err) {
+          .catch(function () {
             // Handle component creation error
           });
       }
@@ -122,11 +113,11 @@ function PayPal({ method, selected, actions }) {
 
   // If braintree is not selected reset client
   useEffect(() => {
-    if ((!isSelected) && (payPalLoaded)) {
+    if (!isSelected && payPalLoaded) {
       setPayPalLoaded(null);
     }
   }, [isSelected,payPalLoaded]);
-  
+
   const radioInputElement = (
     <RadioInput
       value={method.code}
@@ -138,7 +129,7 @@ function PayPal({ method, selected, actions }) {
   );
 
   if (!isSelected) {
-    return {radioInputElement};
+    return { radioInputElement };
   }
 
   return (
@@ -147,7 +138,7 @@ function PayPal({ method, selected, actions }) {
       <div className="mx-4 my-4">
         <Card bg="darker">
           <div className="flex items-center justify-center py-1">
-            <div id="paypal-button"></div>
+            <div id="paypal-button"/>
           </div>
         </Card>
       </div>

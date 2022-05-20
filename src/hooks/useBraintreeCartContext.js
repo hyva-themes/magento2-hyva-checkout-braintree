@@ -6,18 +6,19 @@ import CartContext from '../../../../context/Cart/CartContext';
 export default function useBraintreeCartContext() {
   const [
     cartData,
-    { setCartInfo,
+    {
+      setCartInfo,
       setOrderInfo,
       placeOrder,
       addCartShippingAddress,
-      setEmailOnGuestCart
+      setEmailOnGuestCart,
     }
   ] = useContext(CartContext);
   const cartId = _get(cartData, 'cart.id');
   const cart = _get(cartData, 'cart');
   const email = _get(cartData, 'cart.email');
   const billingAddress = _get(cartData, 'cart.billing_address');
-  const { grandTotalAmount } = _get(cart, 'prices', {}) || {};;
+  const { grandTotalAmount } = _get(cart, 'prices', {}) || {};
 
   return {
     cartId,
@@ -28,6 +29,6 @@ export default function useBraintreeCartContext() {
     setOrderInfo,
     setCartInfo,
     addCartShippingAddress,
-    setEmailOnGuestCart
+    setEmailOnGuestCart,
   };
 }

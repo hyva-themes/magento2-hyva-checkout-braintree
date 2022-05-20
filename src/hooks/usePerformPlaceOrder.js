@@ -7,24 +7,22 @@ export default function usePerformPlaceOrder() {
   const { placeOrder, setOrderInfo } = useBraintreeCartContext();
   const { setPageLoader, setErrorMessage } = useBraintreeAppContext();
 
-  return useCallback(
-    async () => {
-      try {
-        setPageLoader(true);
-        // need to pass in a bypass payment_method so as to call the actiual placeorder function
-        const order = await placeOrder({ payment_method: { code: 'bypass' } } );
-        setPageLoader(false);
-        performRedirect(order);
+  return useCallback(async () => {
+    try {
+      setPageLoader(true);
+      // need to pass in a bypass payment_method so as to call the actiual placeorder function
+      const order = await placeOrder({ payment_method: { code: 'bypass' } } );
+      setPageLoader(false);
+      performRedirect(order);
 
-        if (order) {
-          setOrderInfo(order);
-        }
-      } catch (error) {
-        setErrorMessage(
-            'This transaction could not be performed. Please select another payment method.'
-        );
-        setPageLoader(false);
+      if (order) {
+        setOrderInfo(order);
       }
-    }, [setOrderInfo, setPageLoader, setErrorMessage, placeOrder]
-  );
+    } catch (error) {
+      setErrorMessage(
+          'This transaction could not be performed. Please select another payment method.'
+      );
+      setPageLoader(false);
+    }
+  }, [setOrderInfo, setPageLoader, setErrorMessage, placeOrder]);
 }

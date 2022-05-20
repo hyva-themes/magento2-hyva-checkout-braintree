@@ -7,8 +7,14 @@ export function prepareAddress(address) {
   }
   return {
     company: '',
-    firstname: address.shippingAddress.recipientName.split(' ').slice(0, -1).join(' '),
-    lastname: address.shippingAddress.recipientName.split(' ').slice(-1).join(' '),
+    firstname: address.shippingAddress.recipientName
+      .split(' ')
+      .slice(0, -1)
+      .join(' '),
+    lastname: address.shippingAddress.recipientName
+      .split(' ')
+      .slice(-1)
+      .join(' '),
     street: [address.shippingAddress.line1, address.shippingAddress.line2],
     phone: phoneNumber,
     zipcode: address.shippingAddress.postalCode,
@@ -30,7 +36,7 @@ export function getCreatePaymentOptions(
     intent: 'capture', // Must match the intent passed in with loadPayPalSDK
     enableShippingAddress: true,
     shippingAddressEditable: true,
-    ...((typeof formSectionErrors === 'undefined') && {
+    ...(typeof formSectionErrors === 'undefined' && {
       shippingAddressOverride: {
         recipientName: formSectionValues.fullName,
         line1: formSectionValues.street[0],
@@ -38,8 +44,8 @@ export function getCreatePaymentOptions(
         countryCode: formSectionValues.country,
         postalCode: formSectionValues.zipcode,
         state: formSectionValues.region,
-        phone: formSectionValues.phone
-      }
+        phone: formSectionValues.phone,
+      },
     }),
   };
   return paymentOptions;

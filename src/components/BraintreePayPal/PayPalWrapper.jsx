@@ -6,7 +6,7 @@ import PayPal from './PayPal';
 
 function PayPalWrapper({ method, selected, actions }) {
   if (!paymentConfig.isActive) {
-      return null;
+    return null;
   }
   return <PayPal method={method} selected={selected} actions={actions} />;
 }
