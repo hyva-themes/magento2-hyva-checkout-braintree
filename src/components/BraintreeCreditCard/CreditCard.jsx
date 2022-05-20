@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
-import paymentConfig from './braintreeCreditCardConfig';
 import BraintreeClient from 'braintree-web/client';
 import HostedFields from 'braintree-web/hosted-fields';
+import paymentConfig from './braintreeCreditCardConfig';
 import Card from '../../../../../components/common/Card';
 import RadioInput from '../../../../../components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
@@ -11,10 +11,10 @@ import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCheckoutFormContext from '../../hooks/useBraintreeCheckoutFormContext';
 import useBraintreeCC from './hooks/useBraintreeCC';
 import setPaymentMethod from '../../api/setPaymentMethod';
-import { 
+import {
   getCardTypeImageUrl,
   hostedFieldsStyle,
-  hostedFieldsDefinition
+  hostedFieldsDefinition,
 } from './utility';
 
 function CreditCard({ method, selected, actions }) {
@@ -25,7 +25,7 @@ function CreditCard({ method, selected, actions }) {
   const [isCCValid, setCCValid] = useState(false);
   const [braintreeClient, setBraintreeClient] = useState(null);
   const [braintreeHostedFields, setBraintreeHostedFields] = useState(null);
-  const [creditCardNonce, setCreditCardNonce] = useState(null)
+  const [creditCardNonce, setCreditCardNonce] = useState(null);
   const [cardType, setCardType] = useState(null);
   const isSelected = method.code === selected.code;
 
@@ -34,7 +34,7 @@ function CreditCard({ method, selected, actions }) {
    * is selected by the user.
    */
   const paymentSubmitHandler = useCallback(
-    async (values,hostedFields) => {
+    async (values, hostedFields) => {
       await handleCreditCardCheckThenPlaceOrder(values, hostedFields);
       return false;
     },
@@ -44,63 +44,64 @@ function CreditCard({ method, selected, actions }) {
   // registering this payment method so that it will be using the paymentSubmitHandler
   // to do the place order action in the case this payment method is selected.
   useEffect(() => {
-      registerPaymentAction(method.code, paymentSubmitHandler);
-    },
-    [method, registerPaymentAction, paymentSubmitHandler]
+    registerPaymentAction(method.code, paymentSubmitHandler);
+  }, [method, registerPaymentAction, paymentSubmitHandler]
   );
 
   // Initialise the iframe using the provided clientToken create a braintreeClient
   // Showing the card form within the payment method.
-  useEffect( () => {
+  useEffect(() => {
     async function authoriseBraintree() {
-      if ((isSelected) && (paymentConfig.clientToken) && (!braintreeClient)) {
+      if (isSelected && paymentConfig.clientToken && !braintreeClient) {
         await BraintreeClient.create({
-          authorization: paymentConfig.clientToken
+          authorization: paymentConfig.clientToken,
         })
-        .then(function(clientInstance) {
-          setBraintreeClient(clientInstance);
-          var options = {
-            client: clientInstance,
-            styles: hostedFieldsStyle,
-            fields: hostedFieldsDefinition,
-          };
-          return HostedFields.create(options);
-        })
-        .then(function(hostedFieldsInstance) {
-          setBraintreeHostedFields(hostedFieldsInstance);
-          hostedFieldsInstance.on('validityChange', function (event) {
-            setCCValid(Object.keys(event.fields).every(function (key) {
-              return event.fields[key].isValid;
-            }));
-          });
-          hostedFieldsInstance.on('empty', function (event) {
-            if (event.emittedBy === 'number') {
-              setCardType('');
-            }
-          });
-          hostedFieldsInstance.on('cardTypeChange', function (event) {
-            if (event.cards.length === 1) {
-              setCardType(event.cards[0].type);
-              // Change the CVV length for AmericanExpress cards
-              if (event.cards[0].code.size === 4) {
+          .then(function (clientInstance) {
+            setBraintreeClient(clientInstance);
+            const fieldsOptions = {
+              client: clientInstance,
+              styles: hostedFieldsStyle,
+              fields: hostedFieldsDefinition,
+            };
+            return HostedFields.create(fieldsOptions);
+          })
+          .then(function (hostedFieldsInstance) {
+            setBraintreeHostedFields(hostedFieldsInstance);
+            hostedFieldsInstance.on('validityChange', function (event) {
+              setCCValid(
+                Object.keys(event.fields).every(function (key) {
+                  return event.fields[key].isValid;
+                })
+              );
+            });
+            hostedFieldsInstance.on('empty', function (event) {
+              if (event.emittedBy === 'number') {
+                setCardType('');
+              }
+            });
+            hostedFieldsInstance.on('cardTypeChange', function (event) {
+              if (event.cards.length === 1) {
+                setCardType(event.cards[0].type);
+                // Change the CVV length for AmericanExpress cards
+                if (event.cards[0].code.size === 4) {
+                  hostedFieldsInstance.setAttribute({
+                    field: 'cvv',
+                    attribute: 'placeholder',
+                    value: '1234'
+                  });
+                } 
+              } else {
                 hostedFieldsInstance.setAttribute({
                   field: 'cvv',
                   attribute: 'placeholder',
-                  value: '1234'
+                  value: '123'
                 });
-              } 
-            } else {
-              hostedFieldsInstance.setAttribute({
-                field: 'cvv',
-                attribute: 'placeholder',
-                value: '123'
-              });
-            }
+              }
+            });
+          })
+          .catch(function(error) {
+            setErrorMessage(error.message);
           });
-        })
-        .catch(function(error) {
-          setErrorMessage(error.message);
-        });
       }
     }
     authoriseBraintree();
@@ -140,11 +141,7 @@ function CreditCard({ method, selected, actions }) {
   );
 
   if (!isSelected) {
-    return (
-      <>
-        {radioInputElement}
-      </>
-    );
+    return {radioInputElement};
   }
 
   let detectedCard;
@@ -167,7 +164,7 @@ function CreditCard({ method, selected, actions }) {
             <div className="mt-2">
               <div className="relative transition-transform">
                 <div className="flex space-x-2">
-                  {availableCardTypes.map(availableCard => (
+                  {availableCardTypes.map((availableCard) => (
                     <img
                       key={availableCard}
                       alt={availableCard}
@@ -198,7 +195,6 @@ function CreditCard({ method, selected, actions }) {
 }
 
 CreditCard.propTypes = {
-  actions: shape({ change: func }),
   method: paymentMethodShape.isRequired,
   selected: paymentMethodShape.isRequired,
 };

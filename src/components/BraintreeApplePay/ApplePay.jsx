@@ -57,8 +57,7 @@ function ApplePay({ method, selected, actions }) {
       },
     };
     const paymentRequest =
-      braintreeApplePayClient
-      .createPaymentRequest(paymentData);
+      braintreeApplePayClient.createPaymentRequest(paymentData);
     if (!paymentRequest) {
       setErrorMessage(
         "We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method."
@@ -104,8 +103,7 @@ function ApplePay({ method, selected, actions }) {
         let emailAddress = 'example@exmaple.com';
         if (event.payment.billingContact.emailAddress) {
           emailAddress = event.payment.billingContact.emailAddress;
-        }
-        else if (event.payment.shippingContact.emailAddress) {
+        } else if (event.payment.shippingContact.emailAddress) {
           emailAddress = event.payment.shippingContact.emailAddress;
         }
         braintreeApplePayClient
@@ -124,15 +122,14 @@ function ApplePay({ method, selected, actions }) {
           .catch(function (tokenizeErr) {
             console.error('Error tokenizing Apple Pay:', tokenizeErr);
             session.completePayment(ApplePaySession.STATUS_FAILURE);
-        });
+          });
       };
       session.begin();
     } catch (err) {
-      console.error('Braintree ApplePay Unable to create ApplePaySession',err);
+      console.error('Braintree ApplePay Unable to create ApplePaySession', err);
       setErrorMessage(
         "We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method."
       );
-      return false;
     }
   }, [braintreeApplePayClient, setErrorMessage, grandTotalAmount, method.code]);
 
@@ -147,7 +144,7 @@ function ApplePay({ method, selected, actions }) {
   );
 
   if (!isSelected) {
-    return {radioInputElement};
+    return { radioInputElement };
   }
 
   return (
@@ -156,9 +153,12 @@ function ApplePay({ method, selected, actions }) {
       <div className="mx-4 my-4">
         <Card bg="darker">
           <div className="flex items-center justify-center py-4">
-            <button style={applePayButtonStyle}
+            <button
+              style={applePayButtonStyle}
               type="button"
-              onClick={handlePerformApplePay}/>                    
+              onClick={handlePerformApplePay}
+              label="google pay"
+            />                    
           </div>
         </Card>
       </div>
@@ -167,7 +167,6 @@ function ApplePay({ method, selected, actions }) {
 }
 
 ApplePay.propTypes = {
-  actions: shape({ change: func }),
   method: paymentMethodShape.isRequired,
   selected: paymentMethodShape.isRequired,
 };
