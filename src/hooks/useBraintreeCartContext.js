@@ -12,7 +12,7 @@ export default function useBraintreeCartContext() {
       placeOrder,
       addCartShippingAddress,
       setEmailOnGuestCart,
-    }
+    },
   ] = useContext(CartContext);
   const cartId = _get(cartData, 'cart.id');
   const cart = _get(cartData, 'cart');

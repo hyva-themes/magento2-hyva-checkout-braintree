@@ -60,34 +60,33 @@ function PayPal({ method, selected, actions }) {
                   .Buttons({
                     style: payPalButtonStyle,
                     fundingSource: window.paypal.FUNDING.PAYPAL,
-                    createOrder () {
+                    createOrder() {
                       return paypalCheckout.createPayment(createPaymentOptions);
                     },
-                    onApprove (data) {
+                    onApprove(data) {
                       return paypalCheckout
                         .tokenizePayment(data)
                         .then(function (payload) {
                           // Submit `payload.nonce` to your server
-                          const newShippingAddress = prepareAddress(payload.details);
+                          const newShippingAddress = prepareAddress(
+                            payload.details
+                          );
                           if (typeof formSectionErrors !== 'undefined') {
                             setShippingPayment(
                               newShippingAddress,
                               method.code,
                               payload.nonce
-                            ).then(function(response) {
-                                setCartInfo(response);
+                            ).then(function (response) {
+                              setCartInfo(response);
                             });
-                          }
-                          else {
+                          } else {
                             setPaymentMethod(method.code, payload.nonce)
-                              .then(function(response) {
+                              .then(function (response) {
                                 setCartInfo(response);
                               }
                             );
                           }
                         });
-                    },
-                    onCancel (data) {
                     },
                     onError (error) {
                       console.error('PayPal error', error);
@@ -116,7 +115,7 @@ function PayPal({ method, selected, actions }) {
     if (!isSelected && payPalLoaded) {
       setPayPalLoaded(null);
     }
-  }, [isSelected,payPalLoaded]);
+  }, [isSelected, payPalLoaded]);
 
   const radioInputElement = (
     <RadioInput

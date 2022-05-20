@@ -11,7 +11,7 @@ export default function usePerformPlaceOrder() {
     try {
       setPageLoader(true);
       // need to pass in a bypass payment_method so as to call the actiual placeorder function
-      const order = await placeOrder({ payment_method: { code: 'bypass' } } );
+      const order = await placeOrder({ payment_method: { code: 'bypass' } });
       setPageLoader(false);
       performRedirect(order);
 
@@ -20,7 +20,7 @@ export default function usePerformPlaceOrder() {
       }
     } catch (error) {
       setErrorMessage(
-          'This transaction could not be performed. Please select another payment method.'
+        'This transaction could not be performed. Please select another payment method.'
       );
       setPageLoader(false);
     }
