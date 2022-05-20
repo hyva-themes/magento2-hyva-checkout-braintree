@@ -114,7 +114,7 @@ function GooglePay({ method, selected, actions }) {
     };
     paymentsClient
       .loadPaymentData(paymentDataRequest)
-      .then(function(paymentData) {
+      .then(function (paymentData) {
         const newShippingAddress = prepareAddress(paymentData.shippingAddress);
         if (paymentData.email && paymentData.shippingAddress) {
           try {
@@ -126,12 +126,11 @@ function GooglePay({ method, selected, actions }) {
                   newShippingAddress,
                   method.code,
                   response.nonce
-                ).then(function (response_shipping) {
-                    setCartInfo(response_shipping);
+                ).then(function (responseShipping) {
+                  setCartInfo(responseShipping);
                 });
               });
-          }
-          catch (error) {
+          } catch (error) {
             setErrorMessage(error);
           }
         }

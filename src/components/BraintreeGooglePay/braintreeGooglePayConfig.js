@@ -1,4 +1,3 @@
-
 import RootElement from '../../../../../utils/rootElement';
 
 const config = RootElement.getPaymentConfig();
