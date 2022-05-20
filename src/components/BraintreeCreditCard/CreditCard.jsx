@@ -152,7 +152,7 @@ function CreditCard({ method, selected, actions }) {
     return { radioInputElement };
   }
 
-  let availableCardTypes = paymentConfig.availableCardTypes;
+  let { availableCardTypes } = paymentConfig;
   const detectedCard = availableCardTypes.find(
     (availableCard) => paymentConfig.ccTypesMapper[cardType] === availableCard
   );
@@ -180,53 +180,48 @@ function CreditCard({ method, selected, actions }) {
                     />
                   ))}
                 </div>
-                <label
+                <span
                   className="block text-lg mb-2 uppercase"
                   htmlFor="card-number"
                   label="credit card number"
                 >
                   Credit Card Number
-                </label>
-                <div 
+                </span>
+                <div
                   className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
                   id="card-number"
                   label="card number"
-                >
-                </div>
+                />
               </div>
             </div>
             <div className="flex justify-around">
               <div className="mr-1 w-full transition-transform" >
-                <label
+                <span
                   className="block text-lg mb-2 uppercase"
                   htmlFor="expiration-date"
-                  label="expiration date"
                 >
                   Expiry
-                </label>
+                </span>
                 <div 
                   className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
                   id="expiration-date"
                   label="expiration date"
-                >
-                </div>
+                />
               </div>
               <div className="w-full transition-transform">
-                <label
+                <span
                   className="block text-lg mb-2 uppercase"
                   htmlFor="cvv"
-                  label="cvv"
                 >
                   CVV
-                </label>
+                </span>
                 <div
                   className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
                   id="cvv"
                   label="cvv"
-                >
-                </div>
+                />
               </div>
-            </div>  
+            </div>
           </div>
         </Card>
       </div>
