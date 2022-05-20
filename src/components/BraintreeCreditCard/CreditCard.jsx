@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { func, shape } from 'prop-types';
 import BraintreeClient from 'braintree-web/client';
 import HostedFields from 'braintree-web/hosted-fields';

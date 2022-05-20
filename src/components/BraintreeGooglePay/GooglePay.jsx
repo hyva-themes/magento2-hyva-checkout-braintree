@@ -60,83 +60,100 @@ function GooglePay({ method, selected, actions }) {
           (err, clientInstance) => {
             if (err) {
               setErrorMessage(err);
-            } 
+            }
             else {
               BraintreeClientGooglePay.create({
                 client: clientInstance,
                 googlePayVersion: 2,
                 googleMerchantId: paymentConfig.merchantId,
               })
-              .then(function (googlePaymentInstance) {
-                setBraintreeGooglePayClient(googlePaymentInstance);
-                return paymentsClient.isReadyToPay({
-                  // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
-                  apiVersion: 2,
-                  apiVersionMinor: 0,
-                  allowedPaymentMethods: paymentConfig.cardTypes,
-                  existingPaymentMethodRequired: true,
+                .then(function (googlePaymentInstance) {
+                  setBraintreeGooglePayClient(googlePaymentInstance);
+                  return paymentsClient.isReadyToPay({
+                    // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
+                    apiVersion: 2,
+                    apiVersionMinor: 0,
+                    allowedPaymentMethods: paymentConfig.cardTypes,
+                    existingPaymentMethodRequired: true,
+                  });
+                })
+                .then(function (isReadyToPay) {
+                  if (isReadyToPay.result) {
+                    // need to put something here to make sure the button is valid
+                    setgPayButtonReady(true);
+                  }
+                })
+                .catch(function (error) {
+                  // Handle creation errors
+                  setErrorMessage(error);
                 });
-              })
-              .then(function (isReadyToPay) {
-                if (isReadyToPay.result) {
-                  // need to put something here to make sure the button is valid
-                  setgPayButtonReady(true);
-                }
-              })
-              .catch(function (err) {
-                // Handle creation errors
-                setErrorMessage(err);
-              });
             }
-          });
+          }
+        );
       }
-    }                          
+    }
     authoriseBraintree();
   }, [isSelected, paymentsClient, braintreeGooglePayClient, setErrorMessage]);
 
   const handlePerformGooglePay = useCallback(async () => {
-    var paymentDataRequest = braintreeGooglePayClient.createPaymentDataRequest({
+    const paymentDataRequest = braintreeGooglePayClient.createPaymentDataRequest({
       transactionInfo: {
         currencyCode: env.currencyCode,
         totalPriceStatus: 'ESTIMATED',
-        totalPrice: String(grandTotalAmount) // Your amount
+        totalPrice: String(grandTotalAmount), // Your amount
       },
       emailRequired: true,
       shippingAddressRequired: true,
-      shippingAddressParameters: { phoneNumberRequired: true }
+      shippingAddressParameters: { phoneNumberRequired: true },
     });
-    var cardPaymentMethod = paymentDataRequest.allowedPaymentMethods[0];
+    const cardPaymentMethod = paymentDataRequest.allowedPaymentMethods[0];
     cardPaymentMethod.parameters.billingAddressRequired = true;
     cardPaymentMethod.parameters.billingAddressParameters = {
       format: 'FULL',
-      phoneNumberRequired: true
+      phoneNumberRequired: true,
     };
-    paymentsClient.loadPaymentData(paymentDataRequest).then(function(paymentData) {
-      let newShippingAddress = prepareAddress(paymentData.shippingAddress);
-      if (paymentData.email && paymentData.shippingAddress) {
-        try {
-          braintreeGooglePayClient.parseResponse(paymentData).then(function(response) {
-            setEmailShippingPayment(paymentData.email, newShippingAddress,method.code, response.nonce)
-              .then(function(response) {
-                  setCartInfo(response);
+    paymentsClient
+      .loadPaymentData(paymentDataRequest)
+      .then(function(paymentData) {
+        let newShippingAddress = prepareAddress(paymentData.shippingAddress);
+        if (paymentData.email && paymentData.shippingAddress) {
+          try {
+            braintreeGooglePayClient
+              .parseResponse(paymentData)
+              .then(function (response) {
+                setEmailShippingPayment(
+                  paymentData.email,
+                  newShippingAddress,
+                  method.code,
+                  response.nonce
+                )
+                .then(function(response) {
+                    setCartInfo(response);
+                });
               });
-          });
+          }
+          catch (error) {
+            setErrorMessage(error);
+          }
         }
-        catch (error) {
-          setErrorMessage(error);
-        }
-      }
-    }).catch(function (err) {
-      // Handle errors
-      console.log(err);
-      setErrorMessage(err);
-    });
-  },[braintreeGooglePayClient, paymentsClient, method, grandTotalAmount, setErrorMessage, setCartInfo]);
+      })
+      .catch(function (err) {
+        // Handle errors
+        setErrorMessage(err);
+      });
+  },[
+    braintreeGooglePayClient,
+    paymentsClient,
+    method,
+    grandTotalAmount,
+    setErrorMessage, 
+    setCartInfo
+  ]);
 
   // If braintree is not selected reset client
-  useEffect( () => {
-    if ((!isSelected) && (braintreeGooglePayClient)) {
-        setBraintreeGooglePayClient(null);
+  useEffect(() => {
+    if (!isSelected && braintreeGooglePayClient) {
+      setBraintreeGooglePayClient(null);
     }
   },[isSelected,braintreeGooglePayClient]);
   
