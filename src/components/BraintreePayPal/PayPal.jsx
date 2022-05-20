@@ -150,4 +150,8 @@ PayPal.propTypes = {
   selected: paymentMethodShape.isRequired,
 };
 
+PayPal.defaultProps = {
+  actions: '',
+};
+
 export default PayPal;

@@ -17,4 +17,8 @@ PayPalWrapper.propTypes = {
   selected: paymentMethodShape.isRequired,
 };
 
+PayPalWrapper.defaultProps = {
+  actions: '',
+};
+
 export default PayPalWrapper;
