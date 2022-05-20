@@ -158,7 +158,7 @@ function ApplePay({ method, selected, actions }) {
               type="button"
               onClick={handlePerformApplePay}
               label="google pay"
-            />                    
+            />
           </div>
         </Card>
       </div>
@@ -167,6 +167,7 @@ function ApplePay({ method, selected, actions }) {
 }
 
 ApplePay.propTypes = {
+  actions: shape({ change: func }),
   method: paymentMethodShape.isRequired,
   selected: paymentMethodShape.isRequired,
 };
