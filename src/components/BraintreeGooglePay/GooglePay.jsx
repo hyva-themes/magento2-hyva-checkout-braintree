@@ -15,9 +15,10 @@ import env from '../../../../../utils/env';
 function GooglePay({ method, selected, actions }) {
   const { setErrorMessage } = useBraintreeAppContext();
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();
-  const [braintreeGooglePayClient, setBraintreeGooglePayClient] = useState(null);
+  const [braintreeGooglePayClient, setBraintreeGooglePayClient] =
+    useState(null);
   const [gPayLoaded, setGPayLoaded] = useState(false);
-  const [gPayButtonReady, setgPayButtonReady] = useState(false); 
+  const [gPayButtonReady, setgPayButtonReady] = useState(false);
   const isSelected = method.code === selected.code;
 
   let paymentsClient;
@@ -27,32 +28,37 @@ function GooglePay({ method, selected, actions }) {
     const script = document.createElement('script');
     script.src = 'https://pay.google.com/gp/p/js/pay.js';
     script.async = true;
-    script.onload = () => { 
+    script.onload = () => {
       setGPayLoaded(true);
     };
     document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
-    }
+    };
   }, []);
 
   if (gPayLoaded) {
     paymentsClient = new window.google.payments.api.PaymentsClient({
-      environment: paymentConfig.environment
+      environment: paymentConfig.environment,
     });
-  }        
+  }
   
   // Initialise the iframe using the provided clientToken create a braintreeClient
   // Showing the card form within the payment method.
-  useEffect( () => {
+  useEffect(() => {
     async function authoriseBraintree() {
-      if (isSelected && paymentConfig.clientToken && !braintreeGooglePayClient && paymentsClient) {
+      if (
+        isSelected &&
+        paymentConfig.clientToken &&
+        !braintreeGooglePayClient &&
+        paymentsClient
+      ) {
         await BraintreeClient.create({
           authorization: paymentConfig.clientToken,
-         }, (err, clientInstance) => {
+        },
+         (err, clientInstance) => {
           if (err) {
             setErrorMessage(err);
-            return;
           } 
           else {
             BraintreeClientGooglePay.create({
