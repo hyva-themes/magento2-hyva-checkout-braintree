@@ -213,4 +213,8 @@ GooglePay.propTypes = {
   selected: paymentMethodShape.isRequired,
 };
 
+GooglePay.defaultProps = {
+  actions: '',
+};
+
 export default GooglePay;

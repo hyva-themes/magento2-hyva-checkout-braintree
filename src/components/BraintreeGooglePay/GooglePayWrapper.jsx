@@ -27,4 +27,9 @@ GooglePayWrapper.propTypes = {
   buttonOnly: bool,
 };
 
+GooglePayWrapper.defaultProps = {
+  actions: '',
+  buttonOnly: false,
+};
+
 export default GooglePayWrapper;

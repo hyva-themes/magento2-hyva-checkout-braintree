@@ -172,4 +172,8 @@ ApplePay.propTypes = {
   selected: paymentMethodShape.isRequired,
 };
 
+ApplePay.defaultProps = {
+  actions: '',
+};
+
 export default ApplePay;

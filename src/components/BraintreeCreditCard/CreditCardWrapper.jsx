@@ -18,4 +18,8 @@ CreditCardWrapper.propTypes = {
   selected: paymentMethodShape.isRequired,
 };
 
+CreditCardWrapper.defaultProps = {
+  actions: '',
+};
+
 export default CreditCardWrapper;

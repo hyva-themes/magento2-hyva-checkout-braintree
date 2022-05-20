@@ -26,4 +26,8 @@ ApplePayWrapper.propTypes = {
   selected: paymentMethodShape.isRequired,
 };
 
+ApplePayWrapper.defaultProps = {
+  actions: '',
+};
+
 export default ApplePayWrapper;

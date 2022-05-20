@@ -232,4 +232,8 @@ CreditCard.propTypes = {
   selected: paymentMethodShape.isRequired,
 };
 
+CreditCard.defaultProps = {
+  actions: '',
+};
+
 export default CreditCard;

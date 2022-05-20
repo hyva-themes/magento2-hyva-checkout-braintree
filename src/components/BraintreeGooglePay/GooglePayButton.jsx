@@ -28,9 +28,6 @@ function GooglePayButton() {
         setGPayLoaded(true);
       };
       document.body.appendChild(script);
-      return () => {
-        document.body.removeChild(script);
-      };
     }
     // eslint-disable-next-line
   }, []);
