@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-
-import paymentConfig from './braintreeGooglePayConfig';
 import BraintreeClient from 'braintree-web/client';
 import BraintreeClientGooglePay from 'braintree-web/google-payment';
+import paymentConfig from './braintreeGooglePayConfig';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import setEmailShippingPayment from '../../api/setEmailShippingPayment';
@@ -12,7 +11,8 @@ import env from '../../../../../utils/env';
 function GooglePayButton() {
   const { setErrorMessage } = useBraintreeAppContext();
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();
-  const [braintreeGooglePayClient, setBraintreeGooglePayClient] = useState(null);
+  const [braintreeGooglePayClient, setBraintreeGooglePayClient] =
+    useState(null);
   const [gPayLoaded, setGPayLoaded] = useState(false);
   const [gPayButtonReady, setGPayButtonReady] = useState(false);
 
@@ -21,14 +21,16 @@ function GooglePayButton() {
   // add the gpay script in
   useEffect(() => {
     if (typeof window.google === 'undefined') {
-        const script = document.createElement('script');
-        script.src = "https://pay.google.com/gp/p/js/pay.js";
-        script.async = true;
-        script.onload = () => { setGPayLoaded(true); };
-        document.body.appendChild(script);
-        return () => {
+      const script = document.createElement('script');
+      script.src = "https://pay.google.com/gp/p/js/pay.js";
+      script.async = true;
+      script.onload = () => {
+        setGPayLoaded(true);
+      };
+      document.body.appendChild(script);
+      return () => {
         document.body.removeChild(script);
-        }
+      }
     }
   }, []);
 
@@ -42,18 +44,22 @@ function GooglePayButton() {
   // Showing the card form within the payment method.
   useEffect( () => {
     async function authoriseBraintree() {
-      if ((paymentConfig.clientToken) && (!braintreeGooglePayClient) && (paymentsClient)) {
-        await BraintreeClient.create({ authorization: paymentConfig.clientToken }, (err, clientInstance) => {
+      if (
+        paymentConfig.clientToken &&
+        !braintreeGooglePayClient &&
+        paymentsClient
+      ) {
+        await BraintreeClient.create({
+          authorization: paymentConfig.clientToken
+        }, (err, clientInstance) => {
           if (err) {
-            console.log(err);
             setErrorMessage(err);
-            return;
           } 
           else {
             BraintreeClientGooglePay.create({
                 client: clientInstance,
                 googlePayVersion: 2,
-                googleMerchantId: paymentConfig.merchantId
+                googleMerchantId: paymentConfig.merchantId,
             }).then(function (googlePaymentInstance) {
                 setBraintreeGooglePayClient(googlePaymentInstance);
                 return paymentsClient.isReadyToPay({
@@ -61,7 +67,7 @@ function GooglePayButton() {
                   apiVersion: 2,
                   apiVersionMinor: 0,
                   allowedPaymentMethods: paymentConfig.cardTypes,
-                  existingPaymentMethodRequired: true
+                  existingPaymentMethodRequired: true,
                 });
             }).then(function (isReadyToPay) {
               if (isReadyToPay.result) {
@@ -71,7 +77,6 @@ function GooglePayButton() {
             }).catch(function (err) {
               // Handle creation errors
               setErrorMessage(err);
-              console.log(err);
             });
           }
         });
@@ -89,7 +94,7 @@ function GooglePayButton() {
       },
       emailRequired: true,
       shippingAddressRequired: true,
-      shippingAddressParameters: { phoneNumberRequired: true }
+      shippingAddressParameters: { phoneNumberRequired: true },
     });
     var cardPaymentMethod = paymentDataRequest.allowedPaymentMethods[0];
     cardPaymentMethod.parameters.billingAddressRequired = true;
@@ -123,7 +128,11 @@ function GooglePayButton() {
     return (
       <>
         <div className="flex items-center justify-center py-4">
-            <button style={gPayButtonStyle} type="button"/>                    
+            <button
+              style={gPayButtonStyle}
+              type="button"
+              label="google pay button"
+            />                    
         </div>
       </>
     );  
@@ -131,9 +140,14 @@ function GooglePayButton() {
 
   return (
     <>
-        <div className="flex items-center justify-center py-4">
-            <button style={gPayButtonStyle} type="button" onClick={handlePerformGooglePay}/>                    
-        </div>
+      <div className="flex items-center justify-center py-4">
+        <button
+          style={gPayButtonStyle}
+          type="button"
+          onClick={handlePerformGooglePay}
+          label="google pay button"
+        />                    
+      </div>
     </>
   );
 }

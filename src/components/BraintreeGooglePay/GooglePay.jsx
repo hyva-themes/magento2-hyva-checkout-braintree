@@ -60,8 +60,7 @@ function GooglePay({ method, selected, actions }) {
           (err, clientInstance) => {
             if (err) {
               setErrorMessage(err);
-            }
-            else {
+            } else {
               BraintreeClientGooglePay.create({
                 client: clientInstance,
                 googlePayVersion: 2,
@@ -96,16 +95,17 @@ function GooglePay({ method, selected, actions }) {
   }, [isSelected, paymentsClient, braintreeGooglePayClient, setErrorMessage]);
 
   const handlePerformGooglePay = useCallback(async () => {
-    const paymentDataRequest = braintreeGooglePayClient.createPaymentDataRequest({
-      transactionInfo: {
-        currencyCode: env.currencyCode,
-        totalPriceStatus: 'ESTIMATED',
-        totalPrice: String(grandTotalAmount), // Your amount
-      },
-      emailRequired: true,
-      shippingAddressRequired: true,
-      shippingAddressParameters: { phoneNumberRequired: true },
-    });
+    const paymentDataRequest =
+      braintreeGooglePayClient.createPaymentDataRequest({
+        transactionInfo: {
+          currencyCode: env.currencyCode,
+          totalPriceStatus: 'ESTIMATED',
+          totalPrice: String(grandTotalAmount), // Your amount
+        },
+        emailRequired: true,
+        shippingAddressRequired: true,
+        shippingAddressParameters: { phoneNumberRequired: true },
+      });
     const cardPaymentMethod = paymentDataRequest.allowedPaymentMethods[0];
     cardPaymentMethod.parameters.billingAddressRequired = true;
     cardPaymentMethod.parameters.billingAddressParameters = {
@@ -115,7 +115,7 @@ function GooglePay({ method, selected, actions }) {
     paymentsClient
       .loadPaymentData(paymentDataRequest)
       .then(function(paymentData) {
-        let newShippingAddress = prepareAddress(paymentData.shippingAddress);
+        const newShippingAddress = prepareAddress(paymentData.shippingAddress);
         if (paymentData.email && paymentData.shippingAddress) {
           try {
             braintreeGooglePayClient
@@ -126,9 +126,8 @@ function GooglePay({ method, selected, actions }) {
                   newShippingAddress,
                   method.code,
                   response.nonce
-                )
-                .then(function(response) {
-                    setCartInfo(response);
+                ).then(function (response_shipping) {
+                    setCartInfo(response_shipping);
                 });
               });
           }
@@ -141,13 +140,13 @@ function GooglePay({ method, selected, actions }) {
         // Handle errors
         setErrorMessage(err);
       });
-  },[
+  }, [
     braintreeGooglePayClient,
     paymentsClient,
     method,
     grandTotalAmount,
-    setErrorMessage, 
-    setCartInfo
+    setErrorMessage,
+    setCartInfo,
   ]);
 
   // If braintree is not selected reset client
@@ -155,8 +154,8 @@ function GooglePay({ method, selected, actions }) {
     if (!isSelected && braintreeGooglePayClient) {
       setBraintreeGooglePayClient(null);
     }
-  },[isSelected,braintreeGooglePayClient]);
-  
+  }, [isSelected, braintreeGooglePayClient]);
+
   const radioInputElement = (
     <RadioInput
       value={method.code}
@@ -168,7 +167,7 @@ function GooglePay({ method, selected, actions }) {
   );
 
   if (!isSelected) {
-    return {radioInputElement};
+    return { radioInputElement };
   }
 
   if (!gPayButtonReady) {
@@ -187,7 +186,7 @@ function GooglePay({ method, selected, actions }) {
           </Card>
         </div>
       </>
-    );  
+    );
   }
 
   return (
@@ -195,14 +194,14 @@ function GooglePay({ method, selected, actions }) {
       <div>{radioInputElement}</div>
       <div className="mx-4 my-4">
         <Card bg="darker">
-            <div className="flex items-center justify-center py-4">
-              <button
-                style={gPayButtonStyle}
-                type="button"
-                onClick={handlePerformGooglePay}
-                label="google pay button"
-              />                    
-            </div>
+          <div className="flex items-center justify-center py-4">
+            <button
+              style={gPayButtonStyle}
+              type="button"
+              onClick={handlePerformGooglePay}
+              label="google pay button"
+            />
+          </div>
         </Card>
       </div>
     </>
