@@ -11,20 +11,20 @@ function GooglePayWrapper({ method, selected, actions, buttonOnly = false }) {
     return null;
   }
 
-  // GooglePay and GooglePayButton are very similar but there was 
-  // enough of a difference to seperate them out 
+  // GooglePay and GooglePayButton are very similar but there was
+  // enough of a difference to seperate them out
   if (buttonOnly) {
-    return (<GooglePayButton/>);
+    return <GooglePayButton/>;
   }
 
-  return (<GooglePay method={method} selected={selected} actions={actions} />);
+  return <GooglePay method={method} selected={selected} actions={actions} />;
 }
 
 GooglePayWrapper.propTypes = {
   actions: shape({ change: func }),
   method: paymentMethodShape.isRequired,
   selected: paymentMethodShape.isRequired,
-  buttonOnly: bool
+  buttonOnly: bool,
 };
 
 export default GooglePayWrapper;
