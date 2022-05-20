@@ -123,11 +123,10 @@ function GooglePayButton() {
                   'braintree_googlepay',
                   response.nonce
                 ).then(function (responseShipping) {
-                    setCartInfo(responseShipping);
+                  setCartInfo(responseShipping);
                 });
               });
-          }
-          catch (error) {
+          } catch (error) {
             setErrorMessage(error);
           }
         }
@@ -136,7 +135,7 @@ function GooglePayButton() {
         // Handle errors
         setErrorMessage(error);
       });
-  },[
+  }, [
     braintreeGooglePayClient,
     paymentsClient,
     grandTotalAmount,
