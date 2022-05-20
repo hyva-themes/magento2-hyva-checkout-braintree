@@ -9,7 +9,7 @@ export default function useBraintreeBillingAddressContext(countryList, stateList
   const addressCountry = billingAddress.country;
   const addressRegion = billingAddress.region;
 
-  const country = countryList.find(c => c.id === addressCountry) || {};
+  const country = countryList.find((c) => c.id === addressCountry) || {};
   const state = _get(stateList, country.id, []).find(
       s => s.code === addressRegion
   );
@@ -17,18 +17,18 @@ export default function useBraintreeBillingAddressContext(countryList, stateList
   const stateName = _get(state, 'name', '');
 
   const options = {
-      billingAddress: {
-          postalCode: billingAddress.zipcode,
-          firstName: billingAddress.firstname,
-          lastName: billingAddress.lastname,
-          company: billingAddress.company,
-          streetAddress: _get(billingAddress, 'street', []).join(),
-          locality: billingAddress.city,
-          region: stateName,
-          countryName: countryName,
-      },
-      vault: false,
-  }
+    billingAddress: {
+      postalCode: billingAddress.zipcode,
+      firstName: billingAddress.firstname,
+      lastName: billingAddress.lastname,
+      company: billingAddress.company,
+      streetAddress: _get(billingAddress, 'street', []).join(),
+      locality: billingAddress.city,
+      region: stateName,
+      countryName: countryName,
+    },
+    vault: false,
+  };
 
   return {
     options,

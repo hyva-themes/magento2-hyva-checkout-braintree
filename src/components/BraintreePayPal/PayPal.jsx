@@ -36,10 +36,9 @@ function PayPal({ method, selected, actions }) {
   useEffect(() => {
     async function authoriseBraintree() {
       if (isSelected && paymentConfig.clientToken && !payPalLoaded) {
-        await BraintreeClient
-          .create({
-            authorization: paymentConfig.clientToken,
-          })
+        await BraintreeClient.create({
+          authorization: paymentConfig.clientToken,
+        })
           .then(function (clientInstance) {
             return BraintreeClientPayPal.create({
               client: clientInstance,
@@ -53,26 +52,35 @@ function PayPal({ method, selected, actions }) {
                 currency: env.currencyCode,
                 intent: 'capture',
               })
-              .then(function (paypalCheckoutInstance) {
+              .then(function (paypalCheckout) {
                 // The PayPal script is now loaded on the page and
                 // window.paypal.Buttons is now available to use
                 // render the PayPal button (see Render the PayPal Button section)
+                const { PAYPAL } = window.paypal.FUNDING;
                 return window.paypal
                   .Buttons({
                     style: payPalButtonStyle,
-                    fundingSource: window.paypal.FUNDING.PAYPAL,
+                    fundingSource: PAYPAL,
                     createOrder: function () {
-                      return paypalCheckoutInstance.createPayment(createPaymentOptions);
+                      return paypalCheckout.createPayment(
+                        createPaymentOptions
+                      );
                     },
                     onApprove: function (data, actions) {
-                      return paypalCheckoutInstance
+                      return paypalCheckout
                         .tokenizePayment(data)
                         .then(function (payload) {
+                          const { details } = payload;
                           // Submit `payload.nonce` to your server
-                          console.log(payload.details);
-                          const newShippingAddress = prepareAddress(payload.details);
+                          const newShippingAddress = prepareAddress(
+                            details
+                          );
                           if (typeof formSectionErrors !== 'undefined') {
-                            setShippingPayment(newShippingAddress, method.code, payload.nonce)
+                            setShippingPayment(
+                              newShippingAddress,
+                              method.code,
+                              payload.nonce
+                            )
                               .then(function(response) {
                                 setCartInfo(response);
                               }

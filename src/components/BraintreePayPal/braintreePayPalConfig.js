@@ -1,9 +1,7 @@
-
 import RootElement from '../../../../../utils/rootElement';
 
 const config = RootElement.getPaymentConfig();
-const braintree = config.braintree;
-const braintree_paypal = config.braintree_paypal;
+const { braintree, braintreePaypal } = config;
 const { clientToken } = braintree;
 const {
   isActive,
@@ -13,8 +11,8 @@ const {
   locale,
   paymentAcceptanceMarkSrc,
   vaultCode,
-  paymentIcon
-} = braintree_paypal;
+  paymentIcon,
+} = braintreePaypal;
 
 const paymentConfig = {
   isActive,
@@ -25,7 +23,7 @@ const paymentConfig = {
   locale,
   paymentAcceptanceMarkSrc,
   vaultCode,
-  paymentIcon
+  paymentIcon,
 };
 
 export default paymentConfig;
