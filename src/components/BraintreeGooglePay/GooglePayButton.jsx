@@ -32,7 +32,7 @@ function GooglePayButton() {
         document.body.removeChild(script);
       };
     }
-    // eslint-disable-next-line 
+    // eslint-disable-next-line
   }, []);
 
   if (gPayLoaded) {
