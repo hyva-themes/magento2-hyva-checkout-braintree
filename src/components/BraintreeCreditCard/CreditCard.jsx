@@ -195,24 +195,21 @@ function CreditCard({ method, selected, actions }) {
               </div>
             </div>
             <div className="flex justify-around">
-              <div className="mr-1 w-full transition-transform" >
+              <div className="mr-1 w-full transition-transform">
                 <span
                   className="block text-lg mb-2 uppercase"
                   htmlFor="expiration-date"
                 >
                   Expiry
                 </span>
-                <div 
+                <div
                   className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
                   id="expiration-date"
                   label="expiration date"
                 />
               </div>
               <div className="w-full transition-transform">
-                <span
-                  className="block text-lg mb-2 uppercase"
-                  htmlFor="cvv"
-                >
+                <span className="block text-lg mb-2 uppercase" htmlFor="cvv">
                   CVV
                 </span>
                 <div

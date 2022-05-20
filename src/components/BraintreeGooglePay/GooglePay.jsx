@@ -42,7 +42,7 @@ function GooglePay({ method, selected, actions }) {
       environment: paymentConfig.environment,
     });
   }
-  
+
   // Initialise the iframe using the provided clientToken create a braintreeClient
   // Showing the card form within the payment method.
   useEffect(() => {
@@ -53,41 +53,42 @@ function GooglePay({ method, selected, actions }) {
         !braintreeGooglePayClient &&
         paymentsClient
       ) {
-        await BraintreeClient.create({
-          authorization: paymentConfig.clientToken,
-        },
-         (err, clientInstance) => {
-          if (err) {
-            setErrorMessage(err);
-          } 
-          else {
-            BraintreeClientGooglePay.create({
-              client: clientInstance,
-              googlePayVersion: 2,
-              googleMerchantId: paymentConfig.merchantId,
-            })
-            .then(function (googlePaymentInstance) {
-              setBraintreeGooglePayClient(googlePaymentInstance);
-              return paymentsClient.isReadyToPay({
-                // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
-                apiVersion: 2,
-                apiVersionMinor: 0,
-                allowedPaymentMethods: paymentConfig.cardTypes,
-                existingPaymentMethodRequired: true,
-              });
-            })
-            .then(function (isReadyToPay) {
-              if (isReadyToPay.result) {
-                // need to put something here to make sure the button is valid
-                setgPayButtonReady(true);
-              }
-            })
-            .catch(function (err) {
-              // Handle creation errors
+        await BraintreeClient.create(
+          {
+            authorization: paymentConfig.clientToken,
+          },
+          (err, clientInstance) => {
+            if (err) {
               setErrorMessage(err);
-            });
-          }
-        });
+            } 
+            else {
+              BraintreeClientGooglePay.create({
+                client: clientInstance,
+                googlePayVersion: 2,
+                googleMerchantId: paymentConfig.merchantId,
+              })
+              .then(function (googlePaymentInstance) {
+                setBraintreeGooglePayClient(googlePaymentInstance);
+                return paymentsClient.isReadyToPay({
+                  // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
+                  apiVersion: 2,
+                  apiVersionMinor: 0,
+                  allowedPaymentMethods: paymentConfig.cardTypes,
+                  existingPaymentMethodRequired: true,
+                });
+              })
+              .then(function (isReadyToPay) {
+                if (isReadyToPay.result) {
+                  // need to put something here to make sure the button is valid
+                  setgPayButtonReady(true);
+                }
+              })
+              .catch(function (err) {
+                // Handle creation errors
+                setErrorMessage(err);
+              });
+            }
+          });
       }
     }                          
     authoriseBraintree();

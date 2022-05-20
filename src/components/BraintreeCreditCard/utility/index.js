@@ -53,20 +53,20 @@ export const hostedFieldsStyle = {
     perspective: '1000px',
   },
   '.valid': {
-    color: 'green'
+    color: 'green',
   },
   // placeholder styles need to be individually adjusted
   '::-webkit-input-placeholder': {
-    color: 'rgba(0,0,0,0.6)'
+    color: 'rgba(0,0,0,0.6)',
   },
   ':-moz-placeholder': {
-    color: 'rgba(0,0,0,0.6)'
+    color: 'rgba(0,0,0,0.6)',
   },
   '::-moz-placeholder': {
-    color: 'rgba(0,0,0,0.6)'
+    color: 'rgba(0,0,0,0.6)',
   },
   ':-ms-input-placeholder': {
-    color: 'rgba(0,0,0,0.6)'
+    color: 'rgba(0,0,0,0.6)',
   },
   // prevent IE 11 and Edge from
   // displaying the clear button
