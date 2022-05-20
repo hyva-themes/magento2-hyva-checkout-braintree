@@ -56,7 +56,7 @@ function PayPal({ method, selected, actions }) {
                 // The PayPal script is now loaded on the page and
                 // window.paypal.Buttons is now available to use
                 // render the PayPal button (see Render the PayPal Button section)
-                const { PAYPAL } = ;
+                return window.paypal
                   .Buttons({
                     style: payPalButtonStyle,
                     fundingSource: window.paypal.FUNDING.PAYPAL,
