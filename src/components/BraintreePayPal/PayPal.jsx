@@ -80,16 +80,19 @@ function PayPal({ method, selected, actions }) {
                               setCartInfo(response);
                             });
                           } else {
-                            setPaymentMethod(method.code, payload.nonce).then(function (response) {
+                            setPaymentMethod(method.code, payload.nonce).then(
+                              function (response) {
                                 setCartInfo(response);
-                            });
+                              }
+                            );
                           }
                         });
                     },
-                    onError (error) {
+                    onError(error) {
                       console.error('PayPal error', error);
                     },
-                  }).render('#paypal-button');
+                  })
+                  .render('#paypal-button');
               })
               .then(function () {
                 // The PayPal button will be rendered in an html element with the ID
@@ -133,7 +136,7 @@ function PayPal({ method, selected, actions }) {
       <div className="mx-4 my-4">
         <Card bg="darker">
           <div className="flex items-center justify-center py-1">
-            <div id="paypal-button"/>
+            <div id="paypal-button" />
           </div>
         </Card>
       </div>
