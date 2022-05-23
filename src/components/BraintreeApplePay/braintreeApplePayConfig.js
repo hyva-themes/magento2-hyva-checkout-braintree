@@ -1,13 +1,12 @@
 import RootElement from '../../../../../utils/rootElement';
 
 const config = RootElement.getPaymentConfig();
-const brainTree = config.braintree_applepay;
-const { clientToken, merchantName, paymentMarkSrc } = brainTree;
-
+const brainTree = _get(config,'braintree_applepay');
 const paymentConfig = {
-  clientToken,
-  merchantName,
-  paymentMarkSrc,
+  isActive: _get(brainTree,'isActive', false),
+  clientToken: _get(brainTree,'clientToken', ''),
+  merchantName: _get(brainTree,'merchantName', []),
+  paymentMarkSrc: _get(brainTree,'paymentMarkSrc', []),
 };
 
 export default paymentConfig;

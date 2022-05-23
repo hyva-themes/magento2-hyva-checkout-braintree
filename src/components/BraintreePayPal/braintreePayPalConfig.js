@@ -1,29 +1,18 @@
 import RootElement from '../../../../../utils/rootElement';
 
 const config = RootElement.getPaymentConfig();
-const { braintree, braintreePaypal } = config;
-const { clientToken } = braintree;
-const {
-  isActive,
-  title,
-  isAllowShippingAddressOverride,
-  merchantName,
-  locale,
-  paymentAcceptanceMarkSrc,
-  vaultCode,
-  paymentIcon,
-} = braintreePaypal;
-
+const braintreePaypal = _get(config,'braintree_paypal');
+const braintree = _get(config,'braintree');
 const paymentConfig = {
-  isActive,
-  clientToken,
-  title,
-  isAllowShippingAddressOverride,
-  merchantName,
-  locale,
-  paymentAcceptanceMarkSrc,
-  vaultCode,
-  paymentIcon,
+  isActive: _get(braintreePaypal,'isActive', false),
+  clientToken: _get(braintree,'clientToken', ''),
+  title: _get(braintreePaypal,'title', ''),
+  isAllowShippingAddressOverride: _get(braintreePaypal,'isAllowShippingAddressOverride', false),
+  merchantName: _get(braintreePaypal,'merchantName', ''),
+  locale: _get(braintreePaypal,'locale', ''),
+  paymentAcceptanceMarkSrc: _get(braintreePaypal,'paymentAcceptanceMarkSrc', ''),
+  vaultCode: _get(braintreePaypal,'vaultCode', ''),
+  paymentIcon: _get(braintreePaypal,'paymentIcon', ''),
 };
 
 export default paymentConfig;

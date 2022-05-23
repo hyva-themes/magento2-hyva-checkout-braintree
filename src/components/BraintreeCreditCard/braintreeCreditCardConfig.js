@@ -1,25 +1,15 @@
 import RootElement from '../../../../../utils/rootElement';
 
 const config = RootElement.getPaymentConfig();
-const brainTree = config.braintree;
-const {
-  isActive,
-  clientToken,
-  ccTypesMapper,
-  useCvv,
-  environment,
-  icons,
-  availableCardTypes,
-} = brainTree;
-
+const brainTree = _get(config,'braintree');
 const paymentConfig = {
-  isActive,
-  clientToken,
-  ccTypesMapper,
-  availableCardTypes,
-  useCvv,
-  environment,
-  icons,
+  isActive: _get(brainTree,'isActive', false),
+  clientToken: _get(brainTree,'clientToken', ''),
+  ccTypesMapper: _get(brainTree,'ccTypesMapper', []),
+  availableCardTypes: _get(brainTree,'availableCardTypes', []),
+  useCvv: _get(brainTree,'useCvv', false),
+  environment: _get(brainTree,'environment', false),
+  icons: _get(brainTree,'icons', []),
 };
 
 export default paymentConfig;
