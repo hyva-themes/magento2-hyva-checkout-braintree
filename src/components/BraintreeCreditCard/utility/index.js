@@ -2,7 +2,7 @@ import paymentConfig from '../braintreeCreditCardConfig';
 
 export function validate(hostedFieldsInstance) {
   const state = hostedFieldsInstance.getState();
-  const formValid = Object.keys(state.fields).every(function (key) {
+  const formValid = Object.keys(state.fields).every(function checkIsValid(key) {
     return state.fields[key].isValid;
   });
   if (!formValid) {
