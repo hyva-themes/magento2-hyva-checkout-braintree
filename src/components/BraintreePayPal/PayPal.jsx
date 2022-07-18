@@ -116,23 +116,29 @@ function PayPal({ method, selected, actions }) {
     }
   }, [isSelected, payPalLoaded]);
 
-  const radioInputElement = (
-    <RadioInput
-      value={method.code}
-      label={method.title}
-      name="paymentMethod"
-      checked={isSelected}
-      onChange={actions.change}
-    />
-  );
-
   if (!isSelected) {
-    return { radioInputElement };
+    return (
+      <RadioInput
+        value={method.code}
+        label={method.title}
+        name="paymentMethod"
+        checked={isSelected}
+        onChange={actions.change}
+      />
+    );
   }
 
   return (
     <>
-      <div>{radioInputElement}</div>
+      <div>
+        <RadioInput
+          value={method.code}
+          label={method.title}
+          name="paymentMethod"
+          checked={isSelected}
+          onChange={actions.change}
+        />
+      </div>
       <div className="mx-4 my-4">
         <Card bg="darker">
           <div className="flex items-center justify-center py-1">

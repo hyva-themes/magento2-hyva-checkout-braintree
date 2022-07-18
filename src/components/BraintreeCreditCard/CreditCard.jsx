@@ -138,18 +138,16 @@ function CreditCard({ method, selected, actions }) {
     creditCardNonce,
   ]);
 
-  const radioInputElement = (
-    <RadioInput
-      value={method.code}
-      label={method.title}
-      name="paymentMethod"
-      checked={isSelected}
-      onChange={actions.change}
-    />
-  );
-
   if (!isSelected) {
-    return { radioInputElement };
+    return (
+      <RadioInput
+        value={method.code}
+        label={method.title}
+        name="paymentMethod"
+        checked={isSelected}
+        onChange={actions.change}
+      />
+    );
   }
 
   let { availableCardTypes } = paymentConfig;
@@ -163,7 +161,15 @@ function CreditCard({ method, selected, actions }) {
 
   return (
     <>
-      <div>{radioInputElement}</div>
+      <div>
+        <RadioInput
+          value={method.code}
+          label={method.title}
+          name="paymentMethod"
+          checked={isSelected}
+          onChange={actions.change}
+        />
+      </div>
       <div className="mx-4 my-4">
         <Card bg="darker">
           <div className="w-full">

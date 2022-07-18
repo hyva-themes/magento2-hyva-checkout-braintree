@@ -100,7 +100,7 @@ function ApplePay({ method, selected, actions }) {
         const newShippingAddress = prepareAddress(
           event.payment.shippingContact
         );
-        let emailAddress = 'example@exmaple.com';
+        let emailAddress = 'example@example.com';
         if (event.payment.billingContact.emailAddress) {
           emailAddress = event.payment.billingContact.emailAddress;
         } else if (event.payment.shippingContact.emailAddress) {
@@ -133,23 +133,29 @@ function ApplePay({ method, selected, actions }) {
     }
   }, [braintreeApplePayClient, setErrorMessage, grandTotalAmount, method.code]);
 
-  const radioInputElement = (
-    <RadioInput
-      value={method.code}
-      label={method.title}
-      name="paymentMethod"
-      checked={isSelected}
-      onChange={actions.change}
-    />
-  );
-
   if (!isSelected) {
-    return { radioInputElement };
+    return (
+      <RadioInput
+        value={method.code}
+        label={method.title}
+        name="paymentMethod"
+        checked={isSelected}
+        onChange={actions.change}
+      />
+    );
   }
 
   return (
     <>
-      <div>{radioInputElement}</div>
+      <div>
+        <RadioInput
+          value={method.code}
+          label={method.title}
+          name="paymentMethod"
+          checked={isSelected}
+          onChange={actions.change}
+        />
+      </div>
       <div className="mx-4 my-4">
         <Card bg="darker">
           <div className="flex items-center justify-center py-4">
@@ -157,7 +163,7 @@ function ApplePay({ method, selected, actions }) {
               style={applePayButtonStyle}
               type="button"
               onClick={handlePerformApplePay}
-              label="google pay"
+              label="apple pay"
             />
           </div>
         </Card>
