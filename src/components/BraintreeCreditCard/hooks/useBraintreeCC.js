@@ -9,13 +9,9 @@ export default function useBraintreeCC(paymentMethodCode) {
 
   const handleCreditCardCheckThenPlaceOrder = useCallback(
     async (values) => {
-      const { isValid, message } = validate(values);
-      if (!isValid) {
-        setErrorMessage(message);
-        setPageLoader(false);
-        return false;
-      }
+      setPageLoader(true);
       await performPlaceOrder();
+      setPageLoader(false);
       return true;
     },
     [setErrorMessage, setPageLoader, performPlaceOrder]

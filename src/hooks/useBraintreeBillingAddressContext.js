@@ -19,7 +19,7 @@ export default function useBraintreeBillingAddressContext(
   const countryName = _get(country, 'name', '');
   const stateName = _get(state, 'name', '');
 
-  const options = {
+  const braintreeOptions = {
     billingAddress: {
       postalCode: billingAddress.zipcode,
       firstName: billingAddress.firstname,
@@ -34,6 +34,6 @@ export default function useBraintreeBillingAddressContext(
   };
 
   return {
-    options,
+    braintreeOptions,
   };
 }

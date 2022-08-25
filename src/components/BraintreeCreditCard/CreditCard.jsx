@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { func, shape } from 'prop-types';
 import BraintreeClient from 'braintree-web/client';
 import HostedFields from 'braintree-web/hosted-fields';
@@ -8,8 +8,6 @@ import RadioInput from '../../../../../components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import useBraintreeBillingAddressContext from '../../hooks/useBraintreeBillingAddressContext';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
-import useBraintreeCheckoutFormContext from '../../hooks/useBraintreeCheckoutFormContext';
-import useBraintreeCC from './hooks/useBraintreeCC';
 import setPaymentMethod from '../../api/setPaymentMethod';
 import {
   getCardTypeImageUrl,
@@ -19,33 +17,13 @@ import {
 
 function CreditCard({ method, selected, actions }) {
   const { countryList, stateList, setErrorMessage } = useBraintreeAppContext();
-  const { registerPaymentAction } = useBraintreeCheckoutFormContext();
-  const { options } = useBraintreeBillingAddressContext(countryList, stateList);
-  const { handleCreditCardCheckThenPlaceOrder } = useBraintreeCC(method.code);
-  const [isCCValid, setCCValid] = useState(false);
+  const { braintreeOptions } = useBraintreeBillingAddressContext(
+    countryList,
+    stateList
+  );
   const [braintreeClient, setBraintreeClient] = useState(null);
-  const [braintreeHostedFields, setBraintreeHostedFields] = useState(null);
-  const [creditCardNonce, setCreditCardNonce] = useState(null);
   const [cardType, setCardType] = useState(null);
   const isSelected = method.code === selected.code;
-
-  /**
-   * This will be fired when user placing the order and this payment method
-   * is selected by the user.
-   */
-  const paymentSubmitHandler = useCallback(
-    async (values, hostedFields) => {
-      await handleCreditCardCheckThenPlaceOrder(values, hostedFields);
-      return false;
-    },
-    [handleCreditCardCheckThenPlaceOrder]
-  );
-
-  // registering this payment method so that it will be using the paymentSubmitHandler
-  // to do the place order action in the case this payment method is selected.
-  useEffect(() => {
-    registerPaymentAction(method.code, paymentSubmitHandler);
-  }, [method, registerPaymentAction, paymentSubmitHandler]);
 
   // Initialise the iframe using the provided clientToken create a braintreeClient
   // Showing the card form within the payment method.
@@ -55,7 +33,7 @@ function CreditCard({ method, selected, actions }) {
         await BraintreeClient.create({
           authorization: paymentConfig.clientToken,
         })
-          .then(function (clientInstance) {
+          .then(function createHostedFields(clientInstance) {
             setBraintreeClient(clientInstance);
             const fieldsOptions = {
               client: clientInstance,
@@ -64,79 +42,69 @@ function CreditCard({ method, selected, actions }) {
             };
             return HostedFields.create(fieldsOptions);
           })
-          .then(function (hostedFieldsInstance) {
-            setBraintreeHostedFields(hostedFieldsInstance);
-            hostedFieldsInstance.on('validityChange', function (event) {
-              setCCValid(
-                Object.keys(event.fields).every(function (key) {
-                  return event.fields[key].isValid;
-                })
-              );
-            });
-            hostedFieldsInstance.on('empty', function (event) {
+          .then(function customiseHostedFields(hostedFieldsInstance) {
+            hostedFieldsInstance.on(
+              'validityChange',
+              function setValidityChangeEvent(event) {
+                const formValid = Object.keys(event.fields).every(
+                  function checkFields(key) {
+                    return event.fields[key].isValid;
+                  }
+                );
+                if (formValid) {
+                  hostedFieldsInstance
+                    .tokenize(braintreeOptions)
+                    .then(function setMagentoPaymentMethod(payload) {
+                      setPaymentMethod(method.code, payload.nonce);
+                    })
+                    .catch(function setMagentoPaymentError(error) {
+                      setErrorMessage(error.message);
+                    });
+                }
+              }
+            );
+            hostedFieldsInstance.on('empty', function setCardTypeEmpty(event) {
               if (event.emittedBy === 'number') {
                 setCardType('');
               }
             });
-            hostedFieldsInstance.on('cardTypeChange', function (event) {
-              if (event.cards.length === 1) {
-                setCardType(event.cards[0].type);
-                // Change the CVV length for AmericanExpress cards
-                if (event.cards[0].code.size === 4) {
+            hostedFieldsInstance.on(
+              'cardTypeChange',
+              function setCardTypeChange(event) {
+                if (event.cards.length === 1) {
+                  setCardType(event.cards[0].type);
+                  // Change the CVV length for AmericanExpress cards
+                  if (event.cards[0].code.size === 4) {
+                    hostedFieldsInstance.setAttribute({
+                      field: 'cvv',
+                      attribute: 'placeholder',
+                      value: '1234',
+                    });
+                  }
+                } else {
                   hostedFieldsInstance.setAttribute({
                     field: 'cvv',
                     attribute: 'placeholder',
-                    value: '1234',
+                    value: '123',
                   });
                 }
-              } else {
-                hostedFieldsInstance.setAttribute({
-                  field: 'cvv',
-                  attribute: 'placeholder',
-                  value: '123',
-                });
               }
-            });
+            );
           })
-          .catch(function (error) {
+          .catch(function setBraintreeError(error) {
             setErrorMessage(error.message);
           });
       }
     }
     authoriseBraintree();
-  }, [isSelected, braintreeClient, setCCValid, setCardType, setErrorMessage]);
+  }, [isSelected, braintreeClient, setCardType, setErrorMessage]);
 
   // If braintree is not selected reset client
   useEffect(() => {
     if (!isSelected && braintreeClient) {
       setBraintreeClient(null);
-      setBraintreeHostedFields(null);
-      setCreditCardNonce(null);
     }
   }, [isSelected, braintreeClient]);
-
-  // The iFrame form is valid and we don't have a nonce set tokenise the frame
-  // and send the nonce to the server
-  useEffect(() => {
-    if (isCCValid && !creditCardNonce) {
-      braintreeHostedFields
-        .tokenize(options)
-        .then(function (payload) {
-          setPaymentMethod(method.code, payload.nonce);
-          setCreditCardNonce(payload.nonce);
-        })
-        .catch(function (error) {
-          setErrorMessage(error.message);
-        });
-    }
-  }, [
-    isCCValid,
-    braintreeHostedFields,
-    options,
-    method.code,
-    setErrorMessage,
-    creditCardNonce,
-  ]);
 
   if (!isSelected) {
     return (
