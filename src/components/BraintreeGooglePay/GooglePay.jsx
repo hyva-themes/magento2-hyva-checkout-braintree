@@ -1,6 +1,7 @@
-import React from 'react';
-import { func, shape, bool } from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { func, shape } from 'prop-types';
 import { paymentMethodShape } from '../../utility';
+import RadioInput from '../../../../../components/common/Form/RadioInput';
 import Button from './Button';
 import paymentConfig from './braintreeGooglePayConfig';
 
@@ -36,11 +37,9 @@ function GooglePay({ method, selected, actions }) {
       document.body.removeChild(script);
     };
   }, []);
-  
+
   if (isSelected && googlePayLoaded) {
-    const buttonTag = (
-      <Button />
-    );
+    const buttonTag = (<Button />);
     return [radioInputTag, buttonTag];
   }
   return radioInputTag;

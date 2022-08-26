@@ -6,7 +6,7 @@ import Card from '../../../../../components/common/Card';
 import RadioInput from '../../../../../components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreePayPalConfig';
-import { SHIPPING_ADDR_FORM } from '../../../../../config';
+import { SHIPPING_ADDR_FORM, config } from '../../../../../config';
 import useFormikMemorizer from '../../../../../hook/useFormikMemorizer';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
@@ -15,7 +15,6 @@ import {
   payPalButtonStyle,
   prepareAddress,
 } from './utility';
-import { config } from '../../../../../config';
 import setShippingPayment from '../../api/setShippingPayment';
 import setPaymentMethod from '../../api/setPaymentMethod';
 

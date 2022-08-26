@@ -11,56 +11,60 @@ import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import { prepareAddress, gPayButtonStyle } from './utility';
 import { config } from '../../../../../config';
 
-function Button({ method, selected, actions }) {
+function Button({ method, selected }) {
   const { setErrorMessage, appDispatch } = useBraintreeAppContext();
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();
   const [braintreeGooglePayClient, setBraintreeGooglePayClient] =
     useState(null);
-  const [braintreeGooglePayPaymentsClient, setBraintreeGooglePayPaymentsClient] =
-    useState(null);
+  const [
+    braintreeGooglePayPaymentsClient,
+    setBraintreeGooglePayPaymentsClient
+  ] = useState(null);
   const [googlePayButtonReady, setGooglePayButtonReady] = useState(false);
   const isSelected = method.code === selected.code;
 
   useEffect(() => {
     async function authoriseBraintree() {
-      if (
-        !braintreeGooglePayClient &&
-        !braintreeGooglePayPaymentsClient
-      ) {
+      if (!braintreeGooglePayClient && !braintreeGooglePayPaymentsClient) {
         setBraintreeGooglePayPaymentsClient(new window.google.payments.api.PaymentsClient({
           environment: paymentConfig.environment,
         }));    
-        await BraintreeClient.create({
-          authorization: paymentConfig.clientToken,
-        }).then(function (clientInstance) {
-          BraintreeClientGooglePay.create({
-            client: clientInstance,
-            googlePayVersion: 2,
-            googleMerchantId: paymentConfig.merchantId,
-          }).then(function (googlePaymentInstance) {
-            setBraintreeGooglePayClient(googlePaymentInstance);
-            return braintreeGooglePayPaymentsClient.isReadyToPay({
-              // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
-              apiVersion: 2,
-              apiVersionMinor: 0,
-              allowedPaymentMethods: paymentConfig.cardTypes,
-              existingPaymentMethodRequired: true,
+          await BraintreeClient.create({
+            authorization: paymentConfig.clientToken,
+          }).then(function (clientInstance) {
+            BraintreeClientGooglePay.create({
+              client: clientInstance,
+              googlePayVersion: 2,
+              googleMerchantId: paymentConfig.merchantId,
+            }).then(function (googlePaymentInstance) {
+              setBraintreeGooglePayClient(googlePaymentInstance);
+              return braintreeGooglePayPaymentsClient.isReadyToPay({
+                // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
+                apiVersion: 2,
+                apiVersionMinor: 0,
+                allowedPaymentMethods: paymentConfig.cardTypes,
+                existingPaymentMethodRequired: true,
+              });
+            }).then(function (isReadyToPay) {
+              if (isReadyToPay.result) {
+                // need to put something here to make sure the button is valid
+                setGooglePayButtonReady(true);
+              }
+            })
+            .catch(function (error) {
+              // Handle creation errors
+              setErrorMessage(error);
             });
-          }).then(function (isReadyToPay) {
-            if (isReadyToPay.result) {
-              // need to put something here to make sure the button is valid
-              setGooglePayButtonReady(true);
-            }
-          })
-          .catch(function (error) {
-            // Handle creation errors
-            setErrorMessage(error);
           });
-        });
       }
     }
     authoriseBraintree();
-  }, [isSelected, braintreeGooglePayPaymentsClient, braintreeGooglePayClient, setErrorMessage]);
+  }, [
+    isSelected,
+    braintreeGooglePayPaymentsClient,
+    braintreeGooglePayClient,
+    setErrorMessage,
+  ]);
 
   const handlePerformGooglePay = useCallback(async () => {
     const paymentDataRequest =
