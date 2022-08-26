@@ -26,6 +26,9 @@ export default async function setEmailShippingPayment(
     payment_method_nonce: nonce,
   };
   return modifier(
-    await sendRequest(dispatch, { query: SET_EMAIL_SHIPPING_MUTATION, variables })
+    await sendRequest(dispatch, {
+      query: SET_EMAIL_SHIPPING_MUTATION,
+      variables
+    })
   );
 }

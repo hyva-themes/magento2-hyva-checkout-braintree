@@ -85,11 +85,9 @@ function PayPal({ method, selected, actions }) {
                               appDispatch,
                               method.code,
                               payload.nonce
-                            ).then(
-                              function (response) {
-                                setCartInfo(response);
-                              }
-                            );
+                            ).then(function (response) {
+                              setCartInfo(response);
+                            });
                           }
                         });
                     },

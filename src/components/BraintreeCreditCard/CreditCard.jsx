@@ -16,7 +16,8 @@ import {
 } from './utility';
 
 function CreditCard({ method, selected, actions }) {
-  const { countryList, stateList, setErrorMessage, appDispatch } = useBraintreeAppContext();
+  const { countryList, stateList, setErrorMessage, appDispatch } =
+    useBraintreeAppContext();
   const { braintreeOptions } = useBraintreeBillingAddressContext(
     countryList,
     stateList
@@ -55,11 +56,7 @@ function CreditCard({ method, selected, actions }) {
                   hostedFieldsInstance
                     .tokenize(braintreeOptions)
                     .then(function setMagentoPaymentMethod(payload) {
-                      setPaymentMethod(
-                        appDispatch,
-                        method.code,
-                        payload.nonce
-                      );
+                      setPaymentMethod(appDispatch, method.code, payload.nonce);
                     })
                     .catch(function setMagentoPaymentError(error) {
                       setErrorMessage(error.message);
