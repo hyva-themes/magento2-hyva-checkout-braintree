@@ -17,9 +17,9 @@ function Button({ method }) {
     useState(null);
   const [googlePayButtonReady, setGooglePayButtonReady] = useState(false);
 
-  let paymentsClient = new window.google.payments.api.PaymentsClient({
+  const paymentsClient = new window.google.payments.api.PaymentsClient({
     environment: paymentConfig.environment,
-  })
+  });
 
   useEffect(() => {
     async function authoriseBraintree() {
@@ -56,11 +56,7 @@ function Button({ method }) {
       }
     }
     authoriseBraintree();
-  }, [
-    paymentsClient,
-    braintreeGooglePayClient,
-    setErrorMessage,
-  ]);
+  }, [paymentsClient, braintreeGooglePayClient, setErrorMessage]);
 
   const handlePerformGooglePay = useCallback(async () => {
     const paymentDataRequest =
