@@ -39,26 +39,26 @@ function Button({ method, selected }) {
             googlePayVersion: 2,
             googleMerchantId: paymentConfig.merchantId,
           })
-          .then(function (googlePaymentInstance) {
-            setBraintreeGooglePayClient(googlePaymentInstance);
-            return braintreeGooglePayPaymentsClient.isReadyToPay({
-              // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
-              apiVersion: 2,
-              apiVersionMinor: 0,
-              allowedPaymentMethods: paymentConfig.cardTypes,
-              existingPaymentMethodRequired: true,
+            .then(function (googlePaymentInstance) {
+              setBraintreeGooglePayClient(googlePaymentInstance);
+              return braintreeGooglePayPaymentsClient.isReadyToPay({
+                // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
+                apiVersion: 2,
+                apiVersionMinor: 0,
+                allowedPaymentMethods: paymentConfig.cardTypes,
+                existingPaymentMethodRequired: true,
+              });
+            })
+            .then(function (isReadyToPay) {
+              if (isReadyToPay.result) {
+                // need to put something here to make sure the button is valid
+                setGooglePayButtonReady(true);
+              }
+            })
+            .catch(function (error) {
+              // Handle creation errors
+              setErrorMessage(error);
             });
-          })
-          .then(function (isReadyToPay) {
-            if (isReadyToPay.result) {
-              // need to put something here to make sure the button is valid
-              setGooglePayButtonReady(true);
-            }
-          })
-          .catch(function (error) {
-            // Handle creation errors
-            setErrorMessage(error);
-          });
         });
       }
     }
@@ -148,7 +148,6 @@ function Button({ method, selected }) {
 Button.propTypes = {
   method: paymentMethodShape.isRequired,
   selected: paymentMethodShape.isRequired,
-  actions: shape({ change: func }).isRequired,
 };
 
 export default Button;
