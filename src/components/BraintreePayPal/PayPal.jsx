@@ -21,8 +21,8 @@ function PayPal({ method, selected, actions }) {
   if (!paymentConfig.isActive) {
     return null;
   }
-  if (isSelected && googlePayLoaded) {
-    const buttonTag = <Form method={method}/>;
+  if (isSelected) {
+    const buttonTag = <Form method={method} />;
     return [radioInputTag, buttonTag];
   }
   return radioInputTag;
