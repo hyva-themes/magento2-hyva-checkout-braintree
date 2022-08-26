@@ -1,3 +1,3 @@
-import GooglePayWrapper from './GooglePayWrapper';
+import GooglePay from './GooglePay';
 
-export default GooglePayWrapper;
+export default GooglePay;
