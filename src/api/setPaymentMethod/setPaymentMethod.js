@@ -16,7 +16,7 @@ export default async function setPaymentMethod(
   return modifier(
     await sendRequest(dispatch, {
       query: SET_PAYMENT_METHOD_MUTATION,
-      variables
+      variables,
     })
   );
 }

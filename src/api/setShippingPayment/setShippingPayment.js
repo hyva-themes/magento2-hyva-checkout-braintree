@@ -26,7 +26,7 @@ export default async function setShippingPayment(
   return modifier(
     await sendRequest(dispatch, {
       query: SET_SHIPPING_PAYMENT_MUTATION,
-      variables
+      variables,
     })
   );
 }

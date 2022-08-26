@@ -28,7 +28,7 @@ export default async function setEmailShippingPayment(
   return modifier(
     await sendRequest(dispatch, {
       query: SET_EMAIL_SHIPPING_MUTATION,
-      variables
+      variables,
     })
   );
 }
