@@ -30,7 +30,7 @@ function Button({ method, selected }) {
           new window.google.payments.api.PaymentsClient({
             environment: paymentConfig.environment,
           })
-        );    
+        );
         await BraintreeClient.create({
           authorization: paymentConfig.clientToken,
         }).then(function (clientInstance) {
@@ -38,7 +38,8 @@ function Button({ method, selected }) {
             client: clientInstance,
             googlePayVersion: 2,
             googleMerchantId: paymentConfig.merchantId,
-          }).then(function (googlePaymentInstance) {
+          })
+          .then(function (googlePaymentInstance) {
             setBraintreeGooglePayClient(googlePaymentInstance);
             return braintreeGooglePayPaymentsClient.isReadyToPay({
               // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
@@ -47,7 +48,8 @@ function Button({ method, selected }) {
               allowedPaymentMethods: paymentConfig.cardTypes,
               existingPaymentMethodRequired: true,
             });
-          }).then(function (isReadyToPay) {
+          })
+          .then(function (isReadyToPay) {
             if (isReadyToPay.result) {
               // need to put something here to make sure the button is valid
               setGooglePayButtonReady(true);
