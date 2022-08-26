@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { func, shape } from 'prop-types';
 import BraintreeClient from 'braintree-web/client';
 import BraintreeClientGooglePay from 'braintree-web/google-payment';
 import Card from '../../../../../components/common/Card';
@@ -11,7 +10,7 @@ import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import { prepareAddress, gPayButtonStyle } from './utility';
 import { config } from '../../../../../config';
 
-function Button({ method, selected }) {
+function Button({ method }) {
   const { setErrorMessage, appDispatch } = useBraintreeAppContext();
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();
   const [braintreeGooglePayClient, setBraintreeGooglePayClient] =
@@ -21,7 +20,6 @@ function Button({ method, selected }) {
     setBraintreeGooglePayPaymentsClient,
   ] = useState(null);
   const [googlePayButtonReady, setGooglePayButtonReady] = useState(false);
-  const isSelected = method.code === selected.code;
 
   useEffect(() => {
     async function authoriseBraintree() {
@@ -64,7 +62,6 @@ function Button({ method, selected }) {
     }
     authoriseBraintree();
   }, [
-    isSelected,
     braintreeGooglePayPaymentsClient,
     braintreeGooglePayClient,
     setErrorMessage,
@@ -147,7 +144,6 @@ function Button({ method, selected }) {
 
 Button.propTypes = {
   method: paymentMethodShape.isRequired,
-  selected: paymentMethodShape.isRequired,
 };
 
 export default Button;

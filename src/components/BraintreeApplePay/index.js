@@ -1,3 +1,3 @@
-import ApplePayWrapper from './ApplePayWrapper';
+import ApplePay from './ApplePay';
 
-export default ApplePayWrapper;
+export default ApplePay;

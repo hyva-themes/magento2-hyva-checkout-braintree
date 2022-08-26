@@ -1,3 +1,3 @@
-import PayPalWrapper from './PayPalWrapper';
+import PayPal from './Form';
 
-export default PayPalWrapper;
+export default PayPal;

@@ -1,3 +1,3 @@
-import CreditCardWrapper from './CreditCardWrapper';
+import CreditCard from './CreditCard';
 
-export default CreditCardWrapper;
+export default CreditCard;

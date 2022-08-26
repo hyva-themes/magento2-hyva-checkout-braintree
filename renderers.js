@@ -1,11 +1,11 @@
-import CreditCardWrapper from './src/components/BraintreeCreditCard';
-import ApplePayWrapper from './src/components/BraintreeApplePay';
+import CreditCard from './src/components/BraintreeCreditCard';
+import ApplePay from './src/components/BraintreeApplePay';
 import GooglePay from './src/components/BraintreeGooglePay';
-import PayPalWrapper from './src/components/BraintreePayPal/PayPalWrapper';
+import PayPal from './src/components/BraintreePayPal';
 
 export default {
-  braintree: CreditCardWrapper,
-  braintree_applepay: ApplePayWrapper,
+  braintree: CreditCard,
+  braintree_applepay: ApplePay,
   braintree_googlepay: GooglePay,
-  braintree_paypal: PayPalWrapper,
+  braintree_paypal: PayPal,
 };
