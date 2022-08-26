@@ -20,7 +20,7 @@ import setShippingPayment from '../../api/setShippingPayment';
 import setPaymentMethod from '../../api/setPaymentMethod';
 
 function PayPal({ method, selected, actions }) {
-  const { setErrorMessage } = useBraintreeAppContext();
+  const { setErrorMessage, appDispatch } = useBraintreeAppContext();
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();
   const sectionFormikData = useFormikMemorizer(SHIPPING_ADDR_FORM);
   const { formSectionErrors, formSectionValues } = sectionFormikData;
@@ -73,6 +73,7 @@ function PayPal({ method, selected, actions }) {
                           );
                           if (typeof formSectionErrors !== 'undefined') {
                             setShippingPayment(
+                              appDispatch,
                               newShippingAddress,
                               method.code,
                               payload.nonce
@@ -80,7 +81,11 @@ function PayPal({ method, selected, actions }) {
                               setCartInfo(response);
                             });
                           } else {
-                            setPaymentMethod(method.code, payload.nonce).then(
+                            setPaymentMethod(
+                              appDispatch,
+                              method.code,
+                              payload.nonce
+                            ).then(
                               function (response) {
                                 setCartInfo(response);
                               }

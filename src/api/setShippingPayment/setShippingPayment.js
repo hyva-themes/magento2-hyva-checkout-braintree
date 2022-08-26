@@ -1,9 +1,14 @@
 import { SET_SHIPPING_PAYMENT_MUTATION } from './mutation';
 import modifier from './modifier';
-import sendRequest from '../sendRequest';
+import sendRequest from '../../../../../api/sendRequest';
 import LocalStorage from '../../../../../utils/localStorage';
 
-export default async function setShippingPayment(address, method, nonce) {
+export default async function setShippingPayment(
+  dispatch,
+  address,
+  method,
+  nonce
+) {
   const variables = {
     firstname: address.firstname,
     lastname: address.lastname,
@@ -19,6 +24,6 @@ export default async function setShippingPayment(address, method, nonce) {
     payment_method_nonce: nonce,
   };
   return modifier(
-    await sendRequest({ query: SET_SHIPPING_PAYMENT_MUTATION, variables })
+    await sendRequest(dispatch, { query: SET_SHIPPING_PAYMENT_MUTATION, variables })
   );
 }

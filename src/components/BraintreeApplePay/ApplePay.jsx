@@ -13,7 +13,7 @@ import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import { applePayButtonStyle, prepareAddress } from './utility';
 
 function ApplePay({ method, selected, actions }) {
-  const { setErrorMessage } = useBraintreeAppContext();
+  const { setErrorMessage, appDispatch } = useBraintreeAppContext();
   const { grandTotalAmount } = useBraintreeCartContext();
   const [braintreeApplePayClient, setBraintreeApplePayClient] = useState(null);
   const isSelected = method.code === selected.code;
@@ -112,6 +112,7 @@ function ApplePay({ method, selected, actions }) {
           })
           .then(function (payload) {
             setEmailShippingPayment(
+              appDispatch,
               emailAddress,
               newShippingAddress,
               method.code,

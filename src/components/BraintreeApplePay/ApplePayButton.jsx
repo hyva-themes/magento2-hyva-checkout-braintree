@@ -12,7 +12,7 @@ import setEmailShippingPayment from '../../api/setEmailShippingPayment';
 import {applePayButtonStyle, prepareAddress} from './utility';
 
 function ApplePayButton({ buttonOnly = false }) {
-  const { setErrorMessage} = useBraintreeAppContext();
+  const { setErrorMessage, appDispatch} = useBraintreeAppContext();
   const { grandTotalAmount } = useBraintreeCartContext();
   const [braintreeApplePayClient, setBraintreeApplePayClient] = useState(null);
 
@@ -87,7 +87,12 @@ function ApplePayButton({ buttonOnly = false }) {
           token: event.payment.token
         }).then(function(payload) {
           console.log('nonce:', payload.nonce);
-          setEmailShippingPayment(emailAddress, newShippingAddress, 'braintree_applepay', payload.nonce)
+          setEmailShippingPayment(appDispatch,
+            emailAddress,
+            newShippingAddress,
+            'braintree_applepay',
+            payload.nonce
+          );
           session.completePayment(ApplePaySession.STATUS_SUCCESS);
         }).catch(function(tokenizeErr) {
           console.error('Error tokenizing Apple Pay:', tokenizeErr);

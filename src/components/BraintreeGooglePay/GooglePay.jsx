@@ -13,7 +13,7 @@ import { prepareAddress, gPayButtonStyle } from './utility';
 import env from '../../../../../utils/env';
 
 function GooglePay({ method, selected, actions }) {
-  const { setErrorMessage } = useBraintreeAppContext();
+  const { setErrorMessage, appDispatch } = useBraintreeAppContext();
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();
   const [braintreeGooglePayClient, setBraintreeGooglePayClient] =
     useState(null);
@@ -122,6 +122,7 @@ function GooglePay({ method, selected, actions }) {
               .parseResponse(paymentData)
               .then(function (response) {
                 setEmailShippingPayment(
+                  appDispatch,
                   paymentData.email,
                   newShippingAddress,
                   method.code,

@@ -5,7 +5,7 @@ import AppContext from '../../../../context/App/AppContext';
 export default function useBraintreeAppContext() {
   const [
     { isLoggedIn, stateList, countryList },
-    { setErrorMessage, setPageLoader },
+    { setErrorMessage, setPageLoader, appDispatch },
   ] = useContext(AppContext);
 
   return {
@@ -14,5 +14,6 @@ export default function useBraintreeAppContext() {
     countryList,
     setErrorMessage,
     setPageLoader,
+    appDispatch,
   };
 }
