@@ -15,20 +15,15 @@ function Button({ method }) {
   const { grandTotalAmount, setCartInfo } = useBraintreeCartContext();
   const [braintreeGooglePayClient, setBraintreeGooglePayClient] =
     useState(null);
-  const [
-    braintreeGooglePayPaymentsClient,
-    setBraintreeGooglePayPaymentsClient,
-  ] = useState(null);
   const [googlePayButtonReady, setGooglePayButtonReady] = useState(false);
+
+  let paymentsClient = new window.google.payments.api.PaymentsClient({
+    environment: paymentConfig.environment,
+  })
 
   useEffect(() => {
     async function authoriseBraintree() {
-      if (!braintreeGooglePayClient && !braintreeGooglePayPaymentsClient) {
-        setBraintreeGooglePayPaymentsClient(
-          new window.google.payments.api.PaymentsClient({
-            environment: paymentConfig.environment,
-          })
-        );
+      if (!braintreeGooglePayClient && !paymentsClient) {
         await BraintreeClient.create({
           authorization: paymentConfig.clientToken,
         }).then(function (clientInstance) {
@@ -39,7 +34,7 @@ function Button({ method }) {
           })
             .then(function (googlePaymentInstance) {
               setBraintreeGooglePayClient(googlePaymentInstance);
-              return braintreeGooglePayPaymentsClient.isReadyToPay({
+              return paymentsClient.isReadyToPay({
                 // see https://developers.google.com/pay/api/web/reference/object#IsReadyToPayRequest for all options
                 apiVersion: 2,
                 apiVersionMinor: 0,
@@ -62,7 +57,7 @@ function Button({ method }) {
     }
     authoriseBraintree();
   }, [
-    braintreeGooglePayPaymentsClient,
+    paymentsClient,
     braintreeGooglePayClient,
     setErrorMessage,
   ]);
@@ -85,7 +80,7 @@ function Button({ method }) {
       format: 'FULL',
       phoneNumberRequired: true,
     };
-    braintreeGooglePayPaymentsClient
+    paymentsClient
       .loadPaymentData(paymentDataRequest)
       .then(function (paymentData) {
         const newShippingAddress = prepareAddress(paymentData.shippingAddress);
@@ -115,7 +110,7 @@ function Button({ method }) {
       });
   }, [
     braintreeGooglePayClient,
-    braintreeGooglePayPaymentsClient,
+    paymentsClient,
     method,
     grandTotalAmount,
     setErrorMessage,

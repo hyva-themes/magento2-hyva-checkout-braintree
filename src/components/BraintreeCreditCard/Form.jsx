@@ -131,7 +131,7 @@ function Button({ method }) {
                 Credit Card Number
               </span>
               <div
-                className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
+                className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner"
                 id="card-number"
                 label="card number"
               />
@@ -146,7 +146,7 @@ function Button({ method }) {
                 Expiry
               </span>
               <div
-                className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
+                className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pl-3"
                 id="expiration-date"
                 label="expiration date"
               />
@@ -156,7 +156,7 @@ function Button({ method }) {
                 CVV
               </span>
               <div
-                className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pt-2 pl-3 mb-1"
+                className="rounded bg-white h-12 border-2 border-gray-200 shadow-inner pl-3"
                 id="cvv"
                 label="cvv"
               />

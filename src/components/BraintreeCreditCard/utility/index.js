@@ -23,22 +23,22 @@ export function getCardTypeImageUrl(cardType) {
 export const hostedFieldsDefinition = {
   number: {
     selector: '#card-number',
-    placeholder: '4444 3333 2222 1111',
+    placeholder: 'XXXX XXXX XXXX XXXX',
   },
   cvv: {
     selector: '#cvv',
-    placeholder: '123',
+    placeholder: 'XXX',
   },
   expirationDate: {
     selector: '#expiration-date',
-    placeholder: '11/2025',
+    placeholder: 'XX/YYYY',
   },
 };
 
 export const hostedFieldsStyle = {
   input: {
     color: '#282c37',
-    fontSize: '16px',
+    fontSize: '18px',
     transition: 'color 0.1s',
   },
   ':focus': {
