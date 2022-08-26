@@ -39,7 +39,7 @@ function GooglePay({ method, selected, actions }) {
   }, []);
 
   if (isSelected && googlePayLoaded) {
-    const buttonTag = <Button method={method}/>;
+    const buttonTag = <Button method={method} />;
     return [radioInputTag, buttonTag];
   }
   return radioInputTag;

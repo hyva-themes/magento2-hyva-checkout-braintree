@@ -23,7 +23,7 @@ function CreditCard({ method, selected, actions }) {
   );
 
   if (isSelected) {
-    const buttonTag = <Form method={method}/>;
+    const buttonTag = <Form method={method} />;
     return [radioInputTag, buttonTag];
   }
   return radioInputTag;
@@ -34,6 +34,5 @@ CreditCard.propTypes = {
   selected: paymentMethodShape.isRequired,
   actions: shape({ change: func }).isRequired,
 };
-
 
 export default CreditCard;

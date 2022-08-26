@@ -27,7 +27,7 @@ function Button({ method }) {
   // Showing the card form within the payment method.
   useEffect(() => {
     async function authoriseBraintree() {
-      if (isSelected && paymentConfig.clientToken && !braintreeClient) {
+      if (!braintreeClient) {
         await BraintreeClient.create({
           authorization: paymentConfig.clientToken,
         })

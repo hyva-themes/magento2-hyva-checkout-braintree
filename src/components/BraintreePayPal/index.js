@@ -1,3 +1,3 @@
-import PayPal from './Form';
+import PayPal from './Paypal';
 
 export default PayPal;

@@ -30,7 +30,7 @@ function ApplePay({ method, selected, actions }) {
   }
 
   if (isSelected) {
-    const buttonTag = <Button method={method}/>;
+    const buttonTag = <Button method={method} />;
     return [radioInputTag, buttonTag];
   }
   return radioInputTag;
