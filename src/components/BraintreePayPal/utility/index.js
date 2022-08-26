@@ -1,4 +1,4 @@
-import env from '../../../../../../utils/env';
+import { config } from '../../../../../../config';
 
 export function prepareAddress(address) {
   let phoneNumber = '0000000000';
@@ -32,7 +32,7 @@ export function getCreatePaymentOptions(
   const paymentOptions = {
     flow: 'checkout', // Required
     amount: grandTotalAmount, // Required
-    currency: env.currencyCode, // Required, must match the currency passed in with loadPayPalSDK
+    currency: config.defaultCurrency, // Required, must match the currency passed in with loadPayPalSDK
     intent: 'capture', // Must match the intent passed in with loadPayPalSDK
     enableShippingAddress: true,
     shippingAddressEditable: true,

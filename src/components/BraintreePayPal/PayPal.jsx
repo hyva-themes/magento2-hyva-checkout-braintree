@@ -15,7 +15,7 @@ import {
   payPalButtonStyle,
   prepareAddress,
 } from './utility';
-import env from '../../../../../utils/env';
+import { config } from '../../../../../config';
 import setShippingPayment from '../../api/setShippingPayment';
 import setPaymentMethod from '../../api/setPaymentMethod';
 
@@ -49,7 +49,7 @@ function PayPal({ method, selected, actions }) {
             paypalCheckoutInstance
               .loadPayPalSDK({
                 // need to set this to the currency of the checkout in the future
-                currency: env.currencyCode,
+                currency: config.defaultCurrency,
                 intent: 'capture',
               })
               .then(function (paypalCheckout) {
