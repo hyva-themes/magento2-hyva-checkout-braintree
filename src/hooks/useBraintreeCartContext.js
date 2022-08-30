@@ -21,7 +21,6 @@ export default function useBraintreeCartContext() {
   const { grandTotalAmount } = _get(cart, 'prices', {}) || {};
   const { shipping_methods: methodList } = _get(cartData, 'cart', {});
 
-
   return {
     cartId,
     email,
