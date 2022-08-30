@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import _get from 'lodash.get';
-
+import { _isObjEmpty } from '../../../../utils';
 import CartContext from '../../../../context/Cart/CartContext';
 
 export default function useBraintreeCartContext() {
@@ -19,9 +19,7 @@ export default function useBraintreeCartContext() {
   const email = _get(cartData, 'cart.email');
   const billingAddress = _get(cartData, 'cart.billing_address');
   const { grandTotalAmount } = _get(cart, 'prices', {}) || {};
-  const {
-    shipping_methods: methodList,
-  } = _get(cartData, 'cart', {});
+  const { shipping_methods: methodList } = _get(cartData, 'cart', {});
 
 
   return {
