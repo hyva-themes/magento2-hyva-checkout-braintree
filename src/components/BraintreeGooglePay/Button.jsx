@@ -62,7 +62,7 @@ function Button({ method }) {
     const paymentDataRequest =
       braintreeGooglePayClient.createPaymentDataRequest({
         transactionInfo: {
-          currencyCode: config.defaultCurrency,
+          currencyCode: config.defaultCurrency.code,
           totalPriceStatus: 'ESTIMATED',
           totalPrice: String(grandTotalAmount), // Your amount
         },
