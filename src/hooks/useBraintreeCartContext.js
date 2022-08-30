@@ -19,12 +19,17 @@ export default function useBraintreeCartContext() {
   const email = _get(cartData, 'cart.email');
   const billingAddress = _get(cartData, 'cart.billing_address');
   const { grandTotalAmount } = _get(cart, 'prices', {}) || {};
+  const {
+    shipping_methods: methodList,
+  } = _get(cartData, 'cart', {});
+
 
   return {
     cartId,
     email,
     billingAddress,
     grandTotalAmount,
+    methodsAvailable: !_isObjEmpty(methodList),
     placeOrder,
     setOrderInfo,
     setCartInfo,

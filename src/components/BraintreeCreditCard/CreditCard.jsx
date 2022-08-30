@@ -4,14 +4,15 @@ import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeCreditCardConfig';
 import RadioInput from '../../../../../components/common/Form/RadioInput';
 import Form from './Form';
+import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 
 function CreditCard({ method, selected, actions }) {
   const isSelected = method.code === selected.code;
+  const { methodsAvailable } = useBraintreeCartContext();
 
   if (!paymentConfig.isActive) {
     return null;
   }
-
   const radioInputTag = (
     <RadioInput
       value={method.code}
@@ -21,6 +22,11 @@ function CreditCard({ method, selected, actions }) {
       onChange={actions.change}
     />
   );
+
+  if (!methodsAvailable) {
+    const infoTag = <p>Please Select a Shipping Address</p>;
+    return [radioInputTag, infoTag];
+  }
 
   if (isSelected) {
     const buttonTag = <Form method={method} />;

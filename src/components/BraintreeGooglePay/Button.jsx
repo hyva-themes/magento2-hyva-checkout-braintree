@@ -23,7 +23,7 @@ function Button({ method }) {
 
   useEffect(() => {
     async function authoriseBraintree() {
-      if (!braintreeGooglePayClient && !paymentsClient) {
+      if (!braintreeGooglePayClient) {
         await BraintreeClient.create({
           authorization: paymentConfig.clientToken,
         }).then(function (clientInstance) {
