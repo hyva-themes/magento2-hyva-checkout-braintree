@@ -127,7 +127,7 @@ function Button({ method }) {
     setErrorMessage,
     grandTotalAmount,
     method.code,
-    appDispatch
+    appDispatch,
   ]);
 
   return (

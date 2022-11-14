@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo} from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import BraintreeClient from 'braintree-web/client';
 import BraintreeClientGooglePay from 'braintree-web/google-payment';
 import Card from '../../../../../components/common/Card';
@@ -17,11 +17,9 @@ function Button({ method }) {
     useState(null);
   const [googlePayButtonReady, setGooglePayButtonReady] = useState(false);
 
-  const paymentsClient = useMemo(() => {
-    return new window.google.payments.api.PaymentsClient({
+  const paymentsClient = useMemo(() => new window.google.payments.api.PaymentsClient({
       environment: paymentConfig.environment,
-    });
-  },[]);
+    }),[]);
 
   useEffect(() => {
     async function authoriseBraintree() {
