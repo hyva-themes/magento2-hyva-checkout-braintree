@@ -17,9 +17,11 @@ function Button({ method }) {
     useState(null);
   const [googlePayButtonReady, setGooglePayButtonReady] = useState(false);
 
-  const paymentsClient = useMemo(() ==> return new window.google.payments.api.PaymentsClient({
-    environment: paymentConfig.environment,
-  }));
+  const paymentsClient = useMemo(() ==> {
+    return new window.google.payments.api.PaymentsClient({
+      environment: paymentConfig.environment,
+    })
+  });
 
   useEffect(() => {
     async function authoriseBraintree() {
