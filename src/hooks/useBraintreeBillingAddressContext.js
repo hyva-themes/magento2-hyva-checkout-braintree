@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import _get from 'lodash.get';
+import _get from 'lodash';
 import CartContext from '../../../../context/Cart/CartContext';
 
 export default function useBraintreeBillingAddressContext(

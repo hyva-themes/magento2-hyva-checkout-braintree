@@ -122,7 +122,13 @@ function Button({ method }) {
         "We're unable to take payments through Apple Pay at the moment. Please try an alternative payment method."
       );
     }
-  }, [braintreeApplePayClient, setErrorMessage, grandTotalAmount, method.code]);
+  }, [
+    braintreeApplePayClient,
+    setErrorMessage,
+    grandTotalAmount,
+    method.code,
+    appDispatch
+  ]);
 
   return (
     <div className="mx-4 my-4">

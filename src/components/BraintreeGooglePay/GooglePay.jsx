@@ -23,7 +23,7 @@ function GooglePay({ method, selected, actions }) {
   if (!paymentConfig.clientToken) {
     return null;
   }
-
+  
   // add the gpay script in
   useEffect(() => {
     const script = document.createElement('script');

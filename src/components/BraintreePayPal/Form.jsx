@@ -106,7 +106,15 @@ function Form({ method }) {
       }
     }
     authoriseBraintree();
-  }, [payPalLoaded, setErrorMessage]);
+  }, [
+    payPalLoaded,
+    setErrorMessage,
+    appDispatch,
+    createPaymentOptions,
+    formSectionErrors,
+    method.code,
+    setCartInfo,
+  ]);
 
   return (
     <div className="mx-4 my-4">

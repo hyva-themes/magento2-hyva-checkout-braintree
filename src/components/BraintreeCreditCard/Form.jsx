@@ -95,7 +95,14 @@ function Button({ method }) {
       }
     }
     authoriseBraintree();
-  }, [braintreeClient, setCardType, setErrorMessage]);
+  }, [
+    braintreeClient,
+    setCardType,
+    setErrorMessage,
+    appDispatch,
+    braintreeOptions,
+    method.code,
+  ]);
 
   let { availableCardTypes } = paymentConfig;
   const detectedCard = availableCardTypes.find(
