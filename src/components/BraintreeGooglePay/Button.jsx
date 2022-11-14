@@ -18,9 +18,10 @@ function Button({ method }) {
   const [googlePayButtonReady, setGooglePayButtonReady] = useState(false);
 
   const paymentsClient = useMemo(() ==> {
-    return new window.google.payments.api.PaymentsClient({
+    let temp = new window.google.payments.api.PaymentsClient({
       environment: paymentConfig.environment,
-    })
+    });
+    return temp;
   });
 
   useEffect(() => {
