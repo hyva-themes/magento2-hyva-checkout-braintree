@@ -1,5 +1,5 @@
 import { shape, string } from 'prop-types';
-import _get from 'lodash';
+import { get as _get } from 'lodash-es';
 
 import { config } from '../../../../config';
 import LocalStorage from '../../../../utils/localStorage';

@@ -1,4 +1,4 @@
-import _get from 'lodash';
+import { get as _get } from 'lodash-es';
 import RootElement from '../../../../../utils/rootElement';
 
 const config = RootElement.getPaymentConfig();

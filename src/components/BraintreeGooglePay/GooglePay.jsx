@@ -19,11 +19,6 @@ function GooglePay({ method, selected, actions }) {
     />
   );
 
-  // Make sure we have a client Token
-  if (!paymentConfig.clientToken) {
-    return null;
-  }
-
   // add the gpay script in
   useEffect(() => {
     const script = document.createElement('script');
@@ -37,6 +32,11 @@ function GooglePay({ method, selected, actions }) {
       document.body.removeChild(script);
     };
   }, []);
+
+  // Make sure we have a client Token
+  if (!paymentConfig.clientToken) {
+    return null;
+  }
 
   if (isSelected && googlePayLoaded) {
     const buttonTag = <Button method={method} />;
