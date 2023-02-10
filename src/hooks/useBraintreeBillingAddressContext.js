@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { get as _get } from 'lodash-es';
-import CartContext from '../../../../context/Cart/CartContext';
+import CartContext from '@hyva/react-checkout/context/Cart/CartContext';
 
 export default function useBraintreeBillingAddressContext(
   countryList,

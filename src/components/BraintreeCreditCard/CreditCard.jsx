@@ -1,8 +1,8 @@
 import React from 'react';
 import { func, shape } from 'prop-types';
+import RadioInput from '@hyva/react-checkout/components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeCreditCardConfig';
-import RadioInput from '../../../../../components/common/Form/RadioInput';
 import Form from './Form';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 

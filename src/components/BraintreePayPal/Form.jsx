@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import BraintreeClient from 'braintree-web/client';
 import BraintreeClientPayPal from 'braintree-web/paypal-checkout';
-import Card from '../../../../../components/common/Card';
+import Card from '@hyva/react-checkout/components/common/Card';
+import useFormikMemorizer from '@hyva/react-checkout/hook/useFormikMemorizer';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreePayPalConfig';
 import { SHIPPING_ADDR_FORM, config } from '../../../../../config';
-import useFormikMemorizer from '../../../../../hook/useFormikMemorizer';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
 import useBraintreeCartContext from '../../hooks/useBraintreeCartContext';
 import {

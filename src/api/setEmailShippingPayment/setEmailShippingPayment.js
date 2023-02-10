@@ -1,7 +1,7 @@
+import sendRequest from '@hyva/react-checkout/api/sendRequest';
+import LocalStorage from '@hyva/react-checkout/utils/localStorage';
 import { SET_EMAIL_SHIPPING_MUTATION } from './mutation';
 import modifier from './modifier';
-import sendRequest from '../../../../../api/sendRequest';
-import LocalStorage from '../../../../../utils/localStorage';
 
 export default async function setEmailShippingPayment(
   dispatch,

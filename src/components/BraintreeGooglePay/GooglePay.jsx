@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { func, shape } from 'prop-types';
+import RadioInput from '@hyva/react-checkout/components/common/Form/RadioInput';
 import { paymentMethodShape } from '../../utility';
-import RadioInput from '../../../../../components/common/Form/RadioInput';
 import Button from './Button';
 import paymentConfig from './braintreeGooglePayConfig';
 
