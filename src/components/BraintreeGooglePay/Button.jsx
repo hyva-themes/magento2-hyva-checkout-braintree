@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import BraintreeClient from 'braintree-web/client';
 import BraintreeClientGooglePay from 'braintree-web/google-payment';
-import Card from '../../../../../components/common/Card';
+import Card from '@hyva/react-checkout/components/common/Card';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeGooglePayConfig';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { get as _get } from 'lodash-es';
-import { _isObjEmpty } from '../../../../utils';
-import CartContext from '../../../../context/Cart/CartContext';
+import { _isObjEmpty } from '@hyva/react-checkout/utils';
+import CartContext from '@hyva/react-checkout/context/Cart/CartContext';
 
 export default function useBraintreeCartContext() {
   const [

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import BraintreeClient from 'braintree-web/client';
 import HostedFields from 'braintree-web/hosted-fields';
+import Card from '@hyva/react-checkout/components/common/Card';
 import paymentConfig from './braintreeCreditCardConfig';
-import Card from '../../../../../components/common/Card';
 import { paymentMethodShape } from '../../utility';
 import useBraintreeBillingAddressContext from '../../hooks/useBraintreeBillingAddressContext';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';

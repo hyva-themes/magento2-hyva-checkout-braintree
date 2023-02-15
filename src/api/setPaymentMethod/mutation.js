@@ -1,4 +1,4 @@
-import { CART_DATA_FRAGMENT } from '../../../../../api/cart/utility/query/cartQueryInfo';
+import { CART_DATA_FRAGMENT } from '@hyva/react-checkout/api/cart/utility/query/cartQueryInfo';
 
 export const SET_PAYMENT_METHOD_MUTATION = `
 mutation setPaymentMethodMutation(

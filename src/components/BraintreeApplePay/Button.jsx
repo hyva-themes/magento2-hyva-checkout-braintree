@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { ApplePaySession } from 'braintree-web';
 import BraintreeClient from 'braintree-web/client';
 import BraintreeClientApplePay from 'braintree-web/apple-pay';
-import Card from '../../../../../components/common/Card';
+import Card from '@hyva/react-checkout/components/common/Card';
 import { paymentMethodShape } from '../../utility';
 import paymentConfig from './braintreeApplePayConfig';
 import useBraintreeAppContext from '../../hooks/useBraintreeAppContext';
